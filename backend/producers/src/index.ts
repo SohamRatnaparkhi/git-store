@@ -23,7 +23,6 @@ app.get('/health', (_req: express.Request, res: ServerResponse<string>) => {
     return res.status(requestStatus.OK.code).json({
             data: "Server ready",
             StatusType: requestStatus.OK,
-            error: null
         })
 })
 
