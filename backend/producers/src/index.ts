@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import http from 'http';    
 import { ServerResponse } from './types/server';
 import { RequestStatus } from './constants/status';
+import allRoutes from './routes/router';
 
 dotenv.config();
 
@@ -22,10 +23,11 @@ app.get('/health', (_req: express.Request, res: ServerResponse<string>) => {
     const requestStatus = new RequestStatus();
     return res.status(requestStatus.OK.code).json({
             data: "Server ready",
-            StatusType: requestStatus.OK,
+            statusType: requestStatus.OK,
         })
 })
 
+app.use('/', allRoutes);
 
 const server = http.createServer(app);
 
