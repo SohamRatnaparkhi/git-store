@@ -56,5 +56,5 @@ export type filteredIssue = {
 
 export type filterResponse = {
     type: "pull_request" | "issues" | "others",
-    payload: any,
+    payload: filteredPullRequest | filteredIssue | null,
 }
