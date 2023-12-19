@@ -46,3 +46,23 @@ services:
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:29092 --list
       "
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "5008:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
+      KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+      KAFKA_CLUSTERS_0_JMXPORT: "9999"
+      KAFKA_CLUSTERS_0_JMXUSER: "admin"
+      KAFKA_CLUSTERS_0_JMXPASSWORD: "admin-secret"
+      KAFKA_CLUSTERS_0_JMXSSL: "false"
+      KAFKA_CLUSTERS_0_JMXAUTH: "true"
+      KAFKA_CLUSTERS_0_JMXUSETLS: "false"
+      KAFKA_CLUSTERS_0_JMXPROTOCOL: "JMX_PLAINTEXT"
+      KAFKA_CLUSTERS_0_JMXSASL: "false"
+    depends_on:
+      - kafka
+      - zookeeper
