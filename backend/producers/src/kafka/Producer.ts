@@ -1,5 +1,5 @@
 import { Kafka, Producer } from 'kafkajs';
-import { KAFKA_CONFIG } from 'src/constants/kafka';
+import { KAFKA_CONFIG } from '../constants/kafka';
 
 export class KafkaProducer {
     private static instance: KafkaProducer;
