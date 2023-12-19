@@ -5,7 +5,7 @@ import { StatusType } from './global';
 interface Body<T> {
     data?: T
     error?: any
-    StatusType: StatusType
+    statusType: StatusType
 }
 
 export interface ServerResponse<T> extends express.Response {
