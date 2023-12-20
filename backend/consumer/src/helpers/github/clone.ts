@@ -1,11 +1,8 @@
-// import { generateJWT } from "../jwt";
 import { exec } from 'child_process';
-// import axios from "axios";
 import { Octokit } from "octokit";
 import fs from 'fs';
 import { generateJWT } from '../jwt';
 import { recursiveFullFolderZip } from '../file-handling/zip';
-// import { recursiveFullFolderZip } from '../file-handling/zip';
 
 export const cloneRepo = async (repoOwner: string, repoName: string) => {
     const cwd = process.cwd()
@@ -58,18 +55,6 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
     if (!fs.existsSync(destinationPath)) {
         fs.mkdirSync(destinationPath, { recursive: true });
     }
-
-    // const zipCommand = `zip -r ${destinationPath}${repoName}.zip ${path}`;
-
-    // // executing the command in terminal
-    // await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
-    //     exec(zipCommand, (error, stdout, stderr) => {
-    //         if (error) {
-    //             reject(error);
-    //         }
-    //         resolve({ stdout, stderr });
-    //     });
-    // });
 
     recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
 
