@@ -23,7 +23,11 @@ export type filteredPullRequest = {
     },
     sender: {
         login: string,
+        email: string | null | undefined,
         avatar_url: string,
+    },
+    installation: {
+        id?: number,
     }
 }
 
@@ -50,7 +54,11 @@ export type filteredIssue = {
     },
     sender: {
         login: string,
+        email: string | null | undefined,
         avatar_url: string,
+    },
+    installation: {
+        id?: number,
     }
 }
 
