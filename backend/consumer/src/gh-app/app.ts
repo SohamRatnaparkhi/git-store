@@ -11,8 +11,8 @@ export class GithubApp {
                 secret: process.env.GH_APP_WEBHOOK_SECRET || ''
             },
             oauth: {
-                clientId: 'Iv1.bb50ab8e334c6d8f',
-                clientSecret: '361b8361c480fc03a0081b832434dad2c3c23372'
+                clientId: process.env.GH_APP_CLIENT_ID || '', 
+                clientSecret: process.env.GH_APP_CLIENT_SECRET || ''
             }
         })
         this._app = ghApp;
