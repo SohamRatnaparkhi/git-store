@@ -74,6 +74,10 @@ const PRFilter = (reqBody: EmitterWebhookEvent<"pull_request"> ): filteredPullRe
         sender: {
             login: payload.sender.login,
             avatar_url: payload.sender.avatar_url,
+            email: payload.sender.email,
+        },
+        installation: {
+            id: payload.installation?.id
         }
     }
 }
@@ -107,6 +111,10 @@ const issueFilter = (reqBody: EmitterWebhookEvent<"issues"> ): filteredIssue => 
         sender: {
             login: payload.sender.login,
             avatar_url: payload.sender.avatar_url,
+            email: payload.sender.email,
+        },
+        installation: {
+            id: payload.installation?.id
         }
     }
 }
