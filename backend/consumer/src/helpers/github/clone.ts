@@ -58,16 +58,11 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         fs.mkdirSync(destinationPath, { recursive: true });
     }
 
-    // private/public pair -> encrypt random_generated_message with public key
-
-    const randomMessage = crypto.randomBytes(64).toString('hex');
-    console.log(randomMessage)
-
-    const publicKey = "-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAi5LMDBJNwH8Mp/8/E7AuFwS/fRsm5TTgbt5uuN3tFOL+/YF1hNHm\nag5sNS481IFHYP7t70QpgSFRzyNZ82TdLr6fGMJK/Eb7wjjWC6ychHKlZJFsW/RV\nACLYFQ160/lcNZ5TTqFKIoVb7L73MbK7uV4ir1bF9jUJ/FmB3cJ8KIFZoieGJEda\nvXY0lR4NIE1yahak5lTd/u68gEVRYgfmHhJgK1hDUhj6VvyzZpiFmN2pbs0Xcd6T\nquj8Vipw+d1fqAKhaVyihB4NDed9V0ktY5b2/Lna0dGvgfhL06TIKXpu0gd7Q0bn\nk4B5jjx9pzXcqfw8Kfe256xONQok+o4oswIDAQAB\n-----END RSA PUBLIC KEY-----\n";
+    const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
 
     // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
     if (isPrivate)
-        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', randomMessage);
+        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
     else
         recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
 

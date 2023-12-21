@@ -13,6 +13,7 @@ import { getRSAKeyPair } from './helpers/security/keyPairGen';
 import { decryptMessage, encryptMessage } from './helpers/security/getMessage';
 import fs from 'fs';
 import crypto from 'crypto';
+import { generateHash } from './helpers/security/hashing';
 
 dotenv.config();
 
@@ -59,6 +60,21 @@ app.get('/decrypt', async (_req: express.Request, res: express.Response) => {
     res.send({
         success: true,
         m,
+    });
+});
+
+app.get('/hash', async (_req: express.Request, res: express.Response) => {
+    const h = generateHash('password');
+    res.send({
+        h,
+    }); 
+})
+
+app.post('/get-hash', async (req: express.Request, res: express.Response) => {
+    const { message } = req.body;
+    const h = generateHash(message);
+    res.send({
+        hash: h,
     });
 });
 
