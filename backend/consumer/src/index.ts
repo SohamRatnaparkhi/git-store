@@ -9,6 +9,9 @@ import { KafkaConsumer } from './kafka/Consumer';
 import { KAFKA_TOPICS } from './constants/kafka';
 import { handleGithubPrsClosedEvent } from './helpers/consumer-handlers/prs';
 import axios from 'axios';
+import { getRSAKeyPair } from './helpers/security/keyPairGen';
+import { decryptMessage, encryptMessage } from './helpers/security/getMessage';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -24,13 +27,27 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 
 app.post('/clone-repo', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
-    const { message, path} = await cloneRepo(repoOwner, repoName);
-    res.send({ success: true, message, path});
+    const { message, path } = await cloneRepo(repoOwner, repoName);
+    res.send({ success: true, message, path });
 });
 app.post('/release', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
     await getRelease(repoOwner, repoName, 'latest');
     res.send({ success: true });
+});
+
+app.get('/key-pair', async (_req: express.Request, res: express.Response) => {
+    getRSAKeyPair();
+    console.log("done generating key pair")
+    const encryptedMessage = encryptMessage(Buffer.from(fs.readFileSync('public.pem', 'utf-8')), 'abc');
+    console.log("done encrypting message")
+    const m = decryptMessage();
+    console.log("done decrypting message")
+    console.log(m)
+    res.send({
+        success: true,
+        encryptedMessage,
+    });
 });
 
 app.get('/kafka', async (_req: express.Request, res: express.Response) => {
@@ -59,6 +76,6 @@ const server = http.createServer(app);
 
 server.listen(PORT, async () => {
     console.log(`Server is listening on port ${PORT}!`);
-    const {data } = await axios.get(`http://localhost:${PORT}/kafka`);
+    const { data } = await axios.get(`http://localhost:${PORT}/kafka`);
     console.log(data);
 });
