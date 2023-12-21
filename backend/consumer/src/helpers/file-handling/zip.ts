@@ -1,5 +1,6 @@
 import archiver from 'archiver';
 import fs from 'fs';
+import {exec} from 'child_process';
 
 export const recursiveFullFolderZip = (folderPath: string, destinationPath: string) => {
     const output = fs.createWriteStream(destinationPath);
@@ -23,4 +24,16 @@ export const recursiveFullFolderZip = (folderPath: string, destinationPath: stri
     });
 
     archive.finalize();
+}
+
+export const recursiveFullFolderPasswordZip = (folderPath: string, destinationPath: string, password: string) => {
+    const command = `zip -r -m -P ${password} ${destinationPath} ${folderPath}`;
+    // executing the command in terminal
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.log(error);
+        }
+        console.log(stdout, stderr);
+    });
+    return;
 }

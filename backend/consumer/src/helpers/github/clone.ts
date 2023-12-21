@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { Octokit } from "octokit";
 import fs from 'fs';
 import { generateJWT } from '../jwt';
-import { recursiveFullFolderZip } from '../file-handling/zip';
+import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
 
 export const cloneRepo = async (repoOwner: string, repoName: string) => {
     const cwd = process.cwd()
@@ -20,7 +20,7 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
 
     const command = `git clone https://git:${installationToken}@github.com/${repoOwner}/${repoName}.git`;
     // executing the command in terminal
-    const { stdout, stderr } = await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
+    await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
@@ -29,26 +29,26 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
         });
     });
 
-    // move directory to tmp
-    const mvCommand = `mv ${repoName} tmp/clones/${repoOwner}`;
+    // // move directory to tmp
+    // const mvCommand = `mv ${repoName} tmp/clones/${repoOwner}`;
 
-    // create directory if it doesn't exist
-    if (!fs.existsSync(`${cwd}/tmp/clones/${repoOwner}`)) {
-        fs.mkdirSync(`${cwd}/tmp/clones/${repoOwner}`, { recursive: true });
-    }
+    // // create directory if it doesn't exist
+    // if (!fs.existsSync(`${cwd}/tmp/clones/${repoOwner}`)) {
+    //     fs.mkdirSync(`${cwd}/tmp/clones/${repoOwner}`, { recursive: true });
+    // }
 
-    // executing the command in terminal
-    await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
-        exec(mvCommand, (error, stdout, stderr) => {
-            if (error) {
-                reject(error);
-            }
-            resolve({ stdout, stderr });
-        });
-    });
+    // // executing the command in terminal
+    // await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
+    //     exec(mvCommand, (error, stdout, stderr) => {
+    //         if (error) {
+    //             reject(error);
+    //         }
+    //         resolve({ stdout, stderr });
+    //     });
+    // });
 
     // zip folder
-    const path = `${cwd}/tmp/clones/${repoOwner}/${repoName}`;
+    const path = `./${repoName}`;
     const destinationPath = `${cwd}/tmp/clones/${repoOwner}/zips/`;
 
     // create directory if it doesn't exist
@@ -56,9 +56,13 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
         fs.mkdirSync(destinationPath, { recursive: true });
     }
 
-    recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
+    // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
+    recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', 'password');
 
     console.log('zip created');
 
-    return { stdout, stderr };
+    return {
+        message: 'success',
+        path: `${destinationPath}${repoName}.zip`
+    };
 }
