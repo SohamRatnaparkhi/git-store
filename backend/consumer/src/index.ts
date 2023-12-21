@@ -5,6 +5,10 @@ import * as dotenv from 'dotenv';
 import http from 'http';
 import { cloneRepo } from './helpers/github/clone';
 import { getRelease } from './helpers/github/release';
+import { KafkaConsumer } from './kafka/Consumer';
+import { KAFKA_TOPICS } from './constants/kafka';
+import { handleGithubPrsClosedEvent } from './helpers/consumer-handlers/prs';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -20,8 +24,8 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 
 app.post('/clone-repo', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
-    const { stdout, stderr } = await cloneRepo(repoOwner, repoName);
-    res.send({ stdout, stderr });
+    const { message, path} = await cloneRepo(repoOwner, repoName);
+    res.send({ success: true, message, path});
 });
 app.post('/release', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
@@ -29,10 +33,32 @@ app.post('/release', async (req: express.Request, res: express.Response) => {
     res.send({ success: true });
 });
 
-const server = http.createServer(app);
-
-server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}!`);
+app.get('/kafka', async (_req: express.Request, res: express.Response) => {
+    const consumerInstance = KafkaConsumer.getInstance();
+    if (!consumerInstance.isConnected) {
+        await consumerInstance.connect();
+    }
+    const consumer = consumerInstance.consumer;
+    await consumer.subscribe({ topic: 'github-pull-requests', fromBeginning: true });
+    await consumer.subscribe({ topic: 'github-issues', fromBeginning: true });
+    await consumer.subscribe({ topic: 'notifications', fromBeginning: true });
+    await consumer.run({
+        eachMessage: async ({ topic, message }) => {
+            const type = topic as KAFKA_TOPICS;
+            if (type === 'github-pull-requests') {
+                const value = JSON.parse(message?.value?.toString() ?? '');
+                handleGithubPrsClosedEvent(value.payload);
+            }
+        },
+    });
+    console.log("Kafka consumer is running");
+    res.send({ success: true });
 });
 
-// ewogICAgInR5cCI6IkpXVCIsCiAgICAiYWxnIjoiUlMyNTYiCn0.ewogICAgImlhdCI6MTcwMzA4MjI4NCwKICAgICJleHAiOjE3MDMwODI5NDQsCiAgICAiaXNzIjo3MTc5ODUKfQ.RPE_uQ3SSN7eveA_VSvQ0ibJ5Vl0039sf29ZoqfAwCC588Aw_nZy46r1sTXJvYFR8wgUItABMiGchL9b0gxJm3yRLC43LYjT86cON8UpR3lYt--nbVcweCJxLmVs0y6SW45NRyk4rkkG93TR8elbhhqlqMk - 5bn_3kZn99FdeHUlh1c9ImSEBQwou0zwdWxohDqmiDMVMzXhTmD22EF4Ag4pgPfJrSmNY2z02nJ8h2FrAj6Pcw5vO4dTSNqwJXVZo6xrttc7s3bi7Hv92B3uZdNDhRW7ywkZh3eribZugqDDB4auw5yu2F1 - L8XguEI57UPa4xvFJMg4gMm4vSVeBw
+const server = http.createServer(app);
+
+server.listen(PORT, async () => {
+    console.log(`Server is listening on port ${PORT}!`);
+    const {data } = await axios.get(`http://localhost:${PORT}/kafka`);
+    console.log(data);
+});
