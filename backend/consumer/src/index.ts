@@ -12,6 +12,7 @@ import axios from 'axios';
 import { getRSAKeyPair } from './helpers/security/keyPairGen';
 import { decryptMessage, encryptMessage } from './helpers/security/getMessage';
 import fs from 'fs';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 
 app.post('/clone-repo', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
-    const { message, path } = await cloneRepo(repoOwner, repoName);
+    const { message, path } = await cloneRepo(repoOwner, repoName, false);
     res.send({ success: true, message, path });
 });
 app.post('/release', async (req: express.Request, res: express.Response) => {
@@ -37,16 +38,27 @@ app.post('/release', async (req: express.Request, res: express.Response) => {
 });
 
 app.get('/key-pair', async (_req: express.Request, res: express.Response) => {
-    getRSAKeyPair();
+    const {exportedPublicKeyBuffer} = getRSAKeyPair();
     console.log("done generating key pair")
-    const encryptedMessage = encryptMessage(Buffer.from(fs.readFileSync('public.pem', 'utf-8')), 'abc');
+    const randomMessage = crypto.randomBytes(64).toString('hex');
+    const encryptedMessage = encryptMessage(Buffer.from(exportedPublicKeyBuffer), randomMessage);
+    // const encryptedMessage = encryptMessage(Buffer.from(fs.readFileSync('public.pem', 'utf-8')), randomMessage);
     console.log("done encrypting message")
     const m = decryptMessage();
     console.log("done decrypting message")
     console.log(m)
     res.send({
-        success: true,
+        success: randomMessage == m,
         encryptedMessage,
+        exportedPublicKeyBuffer,
+    });
+});
+
+app.get('/decrypt', async (_req: express.Request, res: express.Response) => {
+    const m = decryptMessage();
+    res.send({
+        success: true,
+        m,
     });
 });
 

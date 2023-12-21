@@ -19,5 +19,5 @@ export const getRSAKeyPair = () => {
     fs.writeFileSync("private.pem", exportedPrivateKeyBuffer, {
         encoding: "utf-8",
     });
-    return { privateKey, publicKey };
+    return { exportedPrivateKeyBuffer, exportedPublicKeyBuffer  };
 }    

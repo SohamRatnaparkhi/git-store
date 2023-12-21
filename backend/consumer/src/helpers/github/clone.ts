@@ -3,8 +3,10 @@ import { Octokit } from "octokit";
 import fs from 'fs';
 import { generateJWT } from '../jwt';
 import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
+import crypto from 'crypto';
+import { encryptMessage } from '../security/getMessage';
 
-export const cloneRepo = async (repoOwner: string, repoName: string) => {
+export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean) => {
     const cwd = process.cwd()
     const token = await generateJWT();
     const octokit = new Octokit({
@@ -56,8 +58,18 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
         fs.mkdirSync(destinationPath, { recursive: true });
     }
 
+    // private/public pair -> encrypt random_generated_message with public key
+
+    const randomMessage = crypto.randomBytes(64).toString('hex');
+    console.log(randomMessage)
+
+    const publicKey = "-----BEGIN RSA PUBLIC KEY-----\nMIIBCgKCAQEAi5LMDBJNwH8Mp/8/E7AuFwS/fRsm5TTgbt5uuN3tFOL+/YF1hNHm\nag5sNS481IFHYP7t70QpgSFRzyNZ82TdLr6fGMJK/Eb7wjjWC6ychHKlZJFsW/RV\nACLYFQ160/lcNZ5TTqFKIoVb7L73MbK7uV4ir1bF9jUJ/FmB3cJ8KIFZoieGJEda\nvXY0lR4NIE1yahak5lTd/u68gEVRYgfmHhJgK1hDUhj6VvyzZpiFmN2pbs0Xcd6T\nquj8Vipw+d1fqAKhaVyihB4NDed9V0ktY5b2/Lna0dGvgfhL06TIKXpu0gd7Q0bn\nk4B5jjx9pzXcqfw8Kfe256xONQok+o4oswIDAQAB\n-----END RSA PUBLIC KEY-----\n";
+
     // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
-    recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', 'password');
+    if (isPrivate)
+        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', randomMessage);
+    else
+        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
 
     console.log('zip created');
 
