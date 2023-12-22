@@ -26,8 +26,13 @@ export const recursiveFullFolderZip = (folderPath: string, destinationPath: stri
     archive.finalize();
 }
 
-export const recursiveFullFolderPasswordZip = (folderPath: string, destinationPath: string, password: string) => {
-    const command = `zip -r -m -P ${password} ${destinationPath} ${folderPath}`;
+export const recursiveFullFolderPasswordZip = (folderPath: string, destinationPath: string, password: string | null) => {
+
+    const command = password !== null
+                        ? 
+                            `zip -r -m -P ${password} ${destinationPath} ${folderPath}`
+                        : 
+                            `zip -r -m ${destinationPath} ${folderPath}`;
     // executing the command in terminal
     exec(command, (error, stdout, stderr) => {
         if (error) {

@@ -3,8 +3,10 @@ import { Octokit } from "octokit";
 import fs from 'fs';
 import { generateJWT } from '../jwt';
 import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
+import crypto from 'crypto';
+import { encryptMessage } from '../security/getMessage';
 
-export const cloneRepo = async (repoOwner: string, repoName: string) => {
+export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean) => {
     const cwd = process.cwd()
     const token = await generateJWT();
     const octokit = new Octokit({
@@ -56,8 +58,13 @@ export const cloneRepo = async (repoOwner: string, repoName: string) => {
         fs.mkdirSync(destinationPath, { recursive: true });
     }
 
+    const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+
     // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
-    recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', 'password');
+    if (isPrivate)
+        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
+    else
+        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
 
     console.log('zip created');
 
