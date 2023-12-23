@@ -61,15 +61,17 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
     const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
 
     // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
+    let zipResp;
     if (isPrivate)
-        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
+        zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
     else
-        recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
+        zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
 
     console.log('zip created');
 
     return {
         message: 'success',
+        response: zipResp,
         path: `${destinationPath}${repoName}.zip`
     };
 }
