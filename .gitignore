@@ -5,3 +5,4 @@ tmp
 private.pem
 public.pem
 encrypted_data.txt
+dist

@@ -26,7 +26,7 @@ export const recursiveFullFolderZip = (folderPath: string, destinationPath: stri
     archive.finalize();
 }
 
-export const recursiveFullFolderPasswordZip = (folderPath: string, destinationPath: string, password: string | null) => {
+export const recursiveFullFolderPasswordZip = async (folderPath: string, destinationPath: string, password: string | null) => {
 
     const command = password !== null
                         ? 
@@ -34,11 +34,12 @@ export const recursiveFullFolderPasswordZip = (folderPath: string, destinationPa
                         : 
                             `zip -r -m ${destinationPath} ${folderPath}`;
     // executing the command in terminal
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.log(error);
-        }
-        console.log(stdout, stderr);
+    return await new Promise<{ stdout: string, stderr: string }>((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            }
+            resolve({ stdout, stderr });
+        });
     });
-    return;
 }
