@@ -11,3 +11,10 @@ interface Body<T> {
 export interface ServerResponse<T> extends express.Response {
     json: Send<Body<T>, this>
 }
+
+export interface helperResponse<T> {
+    data?: T
+    error?: any
+    status: 'success' | 'error'
+    message?: string
+}
