@@ -14,6 +14,7 @@ import { decryptMessage, encryptMessage } from './helpers/security/getMessage';
 import fs from 'fs';
 import crypto from 'crypto';
 import { generateHash } from './helpers/security/hashing';
+import { putObject, putObjectStream } from './helpers/cloud-storage/s3';
 
 dotenv.config();
 
@@ -29,7 +30,7 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 
 app.post('/clone-repo', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
-    const { message, data: path } = await cloneRepo(repoOwner, repoName, false);
+    const { message, data: path } = await cloneRepo(repoOwner, repoName, false, "");
     res.send({ success: true, message, path });
 });
 app.post('/release', async (req: express.Request, res: express.Response) => {
@@ -69,6 +70,13 @@ app.get('/hash', async (_req: express.Request, res: express.Response) => {
         h,
     }); 
 })
+
+app.post('/s3', async (_req: express.Request, res: express.Response) => {
+    const obj = await putObjectStream();
+    res.send({
+        obj,
+    });
+});
 
 app.post('/get-hash', async (req: express.Request, res: express.Response) => {
     const { message } = req.body;
