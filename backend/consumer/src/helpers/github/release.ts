@@ -5,7 +5,7 @@ import { Octokit } from "octokit";
 
 export const getRelease = async (owner: string, repo: string, _tag: string) => {
     const cwd = process.cwd()
-    const token = await generateJWT();
+    const {data: token} = await generateJWT();
     const installationId = '45243137';
     const octokit = new Octokit({
         auth: token,
