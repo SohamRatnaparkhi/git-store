@@ -54,7 +54,8 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
 
         // zip folder
         const path = `./${repoName}`;
-        const destinationPath = `${cwd}/tmp/clones/${repoOwner}/zips/`;
+        const randomNumber = Math.floor(Math.random() * 1000000);
+        const destinationPath = `${cwd}/tmp/clones/${repoOwner}/zips/` + repoName + "_" + mergeCommitSha + randomNumber;
 
         // create directory if it doesn't exist
         if (!fs.existsSync(destinationPath)) {
@@ -64,12 +65,11 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
 
         // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
-        const randomNumber = Math.floor(Math.random() * 1000000);
         let zipResp;
         if (isPrivate)
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + "_" + mergeCommitSha + randomNumber + '.zip', userPasswordHash);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath  + '.zip', userPasswordHash);
         else
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + "_" + mergeCommitSha + randomNumber + '.zip', null);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
 
         console.log('zip created');
 
