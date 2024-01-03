@@ -5,7 +5,7 @@ import { generateJWT } from '../jwt';
 import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
 import { helperResponse } from 'src/types/server';
 
-export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean): Promise<helperResponse<string>> => {
+export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean, mergeCommitSha: string): Promise<helperResponse<string>> => {
     const cwd = process.cwd()
     try {
         const { data: token, error: jwtGenerationError } = await generateJWT();
@@ -64,11 +64,12 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
 
         // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
+        const randomNumber = Math.floor(Math.random() * 1000000);
         let zipResp;
         if (isPrivate)
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + "_" + mergeCommitSha + randomNumber + '.zip', userPasswordHash);
         else
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + "_" + mergeCommitSha + randomNumber + '.zip', null);
 
         console.log('zip created');
 
