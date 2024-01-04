@@ -8,7 +8,7 @@ export const handleGithubPrsClosedEvent = async (message: filteredPullRequest): 
     try {
         console.log("Handling closed pull request event");
         console.log(message);
-        const { status: repoCloneStatus, data: repoCloneData } = await cloneRepo(message.sender.login, message.repository.name, message.repository.private, message.pull_request.merge_commit_sha || '');
+        const { status: repoCloneStatus, data: repoCloneData } = await cloneRepo(message.sender.login, message.repository.name, message.repository.private, message.pull_request.merge_commit_sha || '', message.installation.id || 0);
         console.log(repoCloneStatus, repoCloneData);
 
         if (repoCloneStatus === 'error' || !repoCloneData) {

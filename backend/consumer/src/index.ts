@@ -30,7 +30,7 @@ app.get('/', (_req: express.Request, res: express.Response) => {
 
 app.post('/clone-repo', async (req: express.Request, res: express.Response) => {
     const { repoOwner, repoName } = req.body;
-    const { message, data: path } = await cloneRepo(repoOwner, repoName, false, "");
+    const { message, data: path } = await cloneRepo(repoOwner, repoName, false, "", 0);
     res.send({ success: true, message, path });
 });
 app.post('/release', async (req: express.Request, res: express.Response) => {

@@ -10,7 +10,7 @@ type cloneRepoResponse = {
     fileName: string,
 }
 
-export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean, mergeCommitSha: string): Promise<helperResponse<cloneRepoResponse>> => {
+export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean, mergeCommitSha: string, installationId: number): Promise<helperResponse<cloneRepoResponse>> => {
     const cwd = process.cwd()
     try {
         const { data: token, error: jwtGenerationError } = await generateJWT();
@@ -24,7 +24,8 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         const octokit = new Octokit({
             auth: token,
         })
-        const installationId = '45243137';
+        // const installationId = '45243137';
+        console.log(installationId);
         const resp = await octokit.request(`POST /app/installations/${installationId}/access_tokens`, {
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
@@ -75,7 +76,7 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         if (isPrivate)
             zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + '.zip', userPasswordHash);
         else
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + '.zip', null);
 
         console.log('zip created');
 

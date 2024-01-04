@@ -2,16 +2,16 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import fs from "fs";
 
 const client = new S3Client({
-    region: "ap-south-1",
+    region: process.env.S3_BUCKET_REGION,
     credentials: {
-        accessKeyId: "AKIA3KMDO5STPKCF7Z2R",
-        secretAccessKey: "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",
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     },
 });
 
 export const putObject = async (key: string, filePath: string) => {
     const command = new PutObjectCommand({
-        Bucket: "git-store-bucket-final",
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
         Body: fs.readFileSync(filePath),
     });
@@ -28,7 +28,7 @@ export const putObject = async (key: string, filePath: string) => {
 
 export const putObjectStream = async () => {
     const command = new PutObjectCommand({
-        Bucket: "git-store-bucket-final",
+        Bucket: process.env.S3_BUCKET_NAME,
         Key: "test2.txt",
         Body: "test",
     });
