@@ -1,9 +1,9 @@
 import { exec } from 'child_process';
-import { Octokit } from "octokit";
 import fs from 'fs';
-import { generateJWT } from '../jwt';
-import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
+import { Octokit } from "octokit";
 import { helperResponse } from 'src/types/server';
+import { recursiveFullFolderPasswordZip } from '../file-handling/zip';
+import { generateJWT } from '../jwt';
 
 type cloneRepoResponse = {
     path: string,

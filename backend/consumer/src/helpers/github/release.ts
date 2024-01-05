@@ -1,7 +1,7 @@
 import axios from "axios";
 import fs from "fs";
-import { generateJWT } from "../jwt";
 import { Octokit } from "octokit";
+import { generateJWT } from "../jwt";
 
 export const getRelease = async (owner: string, repo: string, _tag: string) => {
     const cwd = process.cwd()

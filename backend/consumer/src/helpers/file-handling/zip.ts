@@ -1,6 +1,6 @@
 import archiver from 'archiver';
+import { exec } from 'child_process';
 import fs from 'fs';
-import {exec} from 'child_process';
 
 export const recursiveFullFolderZip = (folderPath: string, destinationPath: string) => {
     const output = fs.createWriteStream(destinationPath);

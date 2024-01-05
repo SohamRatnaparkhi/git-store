@@ -1,5 +1,4 @@
 import { generateKeyPairSync } from "crypto";
-import fs from "fs";
 
 export const getRSAKeyPair = () => {
     const { privateKey, publicKey } = generateKeyPairSync('rsa', {
@@ -10,14 +9,14 @@ export const getRSAKeyPair = () => {
         type: "pkcs1",
         format: "pem",
     });
-    fs.writeFileSync("public.pem", exportedPublicKeyBuffer, { encoding: "utf-8" });
+    // fs.writeFileSync("public.pem", exportedPublicKeyBuffer, { encoding: "utf-8" });
 
     const exportedPrivateKeyBuffer = privateKey.export({
         type: "pkcs1",
         format: "pem",
     });
-    fs.writeFileSync("private.pem", exportedPrivateKeyBuffer, {
-        encoding: "utf-8",
-    });
+    // fs.writeFileSync("private.pem", exportedPrivateKeyBuffer, {
+    //     encoding: "utf-8",
+    // });
     return { exportedPrivateKeyBuffer, exportedPublicKeyBuffer  };
 }    

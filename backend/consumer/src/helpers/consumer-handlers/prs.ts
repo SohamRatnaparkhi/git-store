@@ -1,8 +1,8 @@
-import { filteredPullRequest } from "src/types/github";
-import { cloneRepo } from "../github/clone";
 import fs from 'fs';
+import { filteredPullRequest } from "src/types/github";
 import { helperResponse } from "src/types/server";
 import { putObject } from "../cloud-storage/s3";
+import { cloneRepo } from "../github/clone";
 
 export const handleGithubPrsClosedEvent = async (message: filteredPullRequest): Promise<helperResponse<any>> => {
     try {
@@ -31,6 +31,10 @@ export const handleGithubPrsClosedEvent = async (message: filteredPullRequest): 
         // upload to s3
         const { status: s3UploadStatus } = await putObject(fileName, path);
         console.log(s3UploadStatus);
+        
+        const link = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.S3_BUCKET_REGION}.amazonaws.com/${fileName}`;
+
+        console.log(link);
 
         return {
             status: 'success',
