@@ -1,11 +1,11 @@
 import axios from "axios";
 import fs from "fs";
-import { generateJWT } from "../jwt";
 import { Octokit } from "octokit";
+import { generateJWT } from "../jwt";
 
 export const getRelease = async (owner: string, repo: string, _tag: string) => {
     const cwd = process.cwd()
-    const token = await generateJWT();
+    const {data: token} = await generateJWT();
     const installationId = '45243137';
     const octokit = new Octokit({
         auth: token,

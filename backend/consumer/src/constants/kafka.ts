@@ -1,5 +1,5 @@
-import { KafkaConfig } from "kafkajs";
 import { config } from "dotenv";
+import { KafkaConfig } from "kafkajs";
 
 config();
 const KAFKA_BROKER1 = process.env.KAFKA_BROKER1 ?? 'kafka:29092';

@@ -1,4 +1,4 @@
-import { App } from 'octokit'
+import { App } from 'octokit';
 
 export class GithubApp {
     private static instance: GithubApp;

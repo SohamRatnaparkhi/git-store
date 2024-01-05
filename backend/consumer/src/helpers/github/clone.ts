@@ -1,11 +1,16 @@
 import { exec } from 'child_process';
-import { Octokit } from "octokit";
 import fs from 'fs';
-import { generateJWT } from '../jwt';
-import { recursiveFullFolderPasswordZip, recursiveFullFolderZip as _ } from '../file-handling/zip';
+import { Octokit } from "octokit";
 import { helperResponse } from 'src/types/server';
+import { recursiveFullFolderPasswordZip } from '../file-handling/zip';
+import { generateJWT } from '../jwt';
 
-export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean): Promise<helperResponse<string>> => {
+type cloneRepoResponse = {
+    path: string,
+    fileName: string,
+}
+
+export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: boolean, mergeCommitSha: string, installationId: number): Promise<helperResponse<cloneRepoResponse>> => {
     const cwd = process.cwd()
     try {
         const { data: token, error: jwtGenerationError } = await generateJWT();
@@ -19,7 +24,8 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         const octokit = new Octokit({
             auth: token,
         })
-        const installationId = '45243137';
+        // const installationId = '45243137';
+        console.log(installationId);
         const resp = await octokit.request(`POST /app/installations/${installationId}/access_tokens`, {
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
@@ -54,11 +60,13 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
 
         // zip folder
         const path = `./${repoName}`;
-        const destinationPath = `${cwd}/tmp/clones/${repoOwner}/zips/`;
+        const randomNumber = Math.floor(Math.random() * 1000000);
+        const folderPath = `${cwd}/tmp/clones/${repoOwner}/zips/`;
+        const destinationPath =  folderPath + repoName + "_" + mergeCommitSha + randomNumber;
 
         // create directory if it doesn't exist
-        if (!fs.existsSync(destinationPath)) {
-            fs.mkdirSync(destinationPath, { recursive: true });
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath, { recursive: true });
         }
 
         const userPasswordHash = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
@@ -66,16 +74,19 @@ export const cloneRepo = async (repoOwner: string, repoName: string, isPrivate: 
         // recursiveFullFolderZip(path, destinationPath + repoName + '.zip')
         let zipResp;
         if (isPrivate)
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', userPasswordHash);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + '.zip', userPasswordHash);
         else
-            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + repoName + '.zip', null);
+            zipResp = await recursiveFullFolderPasswordZip(path, destinationPath + '.zip', null);
 
         console.log('zip created');
 
         return {
             status: 'success',
             message: JSON.stringify(zipResp),
-            data: `${destinationPath}${repoName}.zip`
+            data: {
+                path: `${destinationPath}.zip`,
+                fileName: repoName + "_" + mergeCommitSha + randomNumber + '.zip',
+            }
         };
     } catch (error) {
         return {
