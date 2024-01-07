@@ -1,0 +1,60 @@
+type User {
+    userId: ID!
+    localUsername: String
+    localHashedPassword: String
+    oAuthProviders: String
+    email: String!
+    accountType: String!
+    walletAddress: String
+    rsaPublicKey: String!
+    hashedSecret: String!
+}
+
+input RegisterUserInput {
+    localUsername: String!
+    localHashedPassword: String!
+    email: String!
+    accountType: String!
+}
+
+input RegisterUserOAuthInput {
+    oAuthProviders: String!
+    email: String!
+    accountType: String!
+}
+
+input LoginUserInput {
+    localUsername: String!
+    localHashedPassword: String!
+}
+
+input LoginUserOAuthInput {
+    oAuthProviders: String!
+}
+
+input UpdateUserInput {
+    userId: ID!
+    localUsername: String
+    localHashedPassword: String
+    oAuthProviders: String
+    email: String
+    accountType: String
+    walletAddress: String
+    rsaPublicKey: String
+    hashedSecret: String
+}
+
+extend type Query {
+    user(userId: ID!): User
+    users: [User]
+    loginUser(input: LoginUserInput!): User
+}
+
+extend type Mutation {
+    registerUser(input: RegisterUserInput!): User
+    registerUserOAuth(input: RegisterUserOAuthInput!): User
+    loginUser(input: LoginUserInput!): User
+    loginUserOAuth(input: LoginUserOAuthInput!): User
+    updateUser(input: UpdateUserInput!): User
+    deleteUser(userId: ID!): User
+}

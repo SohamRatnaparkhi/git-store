@@ -2,6 +2,15 @@
 
 package model
 
+type LoginUserInput struct {
+	LocalUsername       string `json:"localUsername"`
+	LocalHashedPassword string `json:"localHashedPassword"`
+}
+
+type LoginUserOAuthInput struct {
+	OAuthProviders string `json:"oAuthProviders"`
+}
+
 type Mutation struct {
 }
 
@@ -13,14 +22,51 @@ type NewTodo struct {
 type Query struct {
 }
 
+type RegisterUserInput struct {
+	LocalUsername       string `json:"localUsername"`
+	LocalHashedPassword string `json:"localHashedPassword"`
+	Email               string `json:"email"`
+	AccountType         string `json:"accountType"`
+}
+
+type RegisterUserOAuthInput struct {
+	OAuthProviders string `json:"oAuthProviders"`
+	Email          string `json:"email"`
+	AccountType    string `json:"accountType"`
+}
+
 type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+	ID   string    `json:"id"`
+	Text string    `json:"text"`
+	Done bool      `json:"done"`
+	User *UserCopy `json:"user"`
+}
+
+type UpdateUserInput struct {
+	UserID              string  `json:"userId"`
+	LocalUsername       *string `json:"localUsername,omitempty"`
+	LocalHashedPassword *string `json:"localHashedPassword,omitempty"`
+	OAuthProviders      *string `json:"oAuthProviders,omitempty"`
+	Email               *string `json:"email,omitempty"`
+	AccountType         *string `json:"accountType,omitempty"`
+	WalletAddress       *string `json:"walletAddress,omitempty"`
+	RsaPublicKey        *string `json:"rsaPublicKey,omitempty"`
+	HashedSecret        *string `json:"hashedSecret,omitempty"`
 }
 
 type User struct {
+	UserID              string  `json:"userId"`
+	LocalUsername       *string `json:"localUsername,omitempty"`
+	LocalHashedPassword *string `json:"localHashedPassword,omitempty"`
+	OAuthProviders      *string `json:"oAuthProviders,omitempty"`
+	Email               string  `json:"email"`
+	AccountType         string  `json:"accountType"`
+	WalletAddress       *string `json:"walletAddress,omitempty"`
+	RsaPublicKey        string  `json:"rsaPublicKey"`
+	HashedSecret        string  `json:"hashedSecret"`
+}
+
+type UserCopy struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
