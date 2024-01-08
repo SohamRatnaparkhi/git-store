@@ -10,15 +10,17 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db"
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/graph"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8087"
 
-func graphqlHandler() gin.HandlerFunc {
+func graphqlHandler(dbQueries database.Queries) gin.HandlerFunc {
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
-	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.NewConfig(&dbQueries)))
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
@@ -55,10 +57,14 @@ func main() {
 		host = "localhost"
 	}
 
+	// Setting up DB
+	dbQueries := db.ConnectDB()
+	log.Printf("connected to DB")
+
 	// Setting up Gin
 	r := gin.Default()
 	r.Use(cors.Default())
-	r.POST("/query", graphqlHandler())
+	r.POST("/query", graphqlHandler(*dbQueries))
 	r.GET("/", playgroundHandler())
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)

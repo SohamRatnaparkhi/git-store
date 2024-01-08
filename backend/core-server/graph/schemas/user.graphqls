@@ -48,13 +48,12 @@ extend type Query {
     user(userId: ID!): User
     users: [User]
     loginUser(input: LoginUserInput!): User
+    loginUserOAuth(input: LoginUserOAuthInput!): User
 }
 
 extend type Mutation {
     registerUser(input: RegisterUserInput!): User
     registerUserOAuth(input: RegisterUserOAuthInput!): User
-    loginUser(input: LoginUserInput!): User
-    loginUserOAuth(input: LoginUserOAuthInput!): User
     updateUser(input: UpdateUserInput!): User
     deleteUser(userId: ID!): User
 }

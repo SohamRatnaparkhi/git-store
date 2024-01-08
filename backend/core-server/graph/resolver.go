@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,6 +13,7 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
+	dbQueries *database.Queries
 }
 
 func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
@@ -27,4 +29,12 @@ func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 		return nil, err
 	}
 	return gc, nil
+}
+
+func NewConfig(dbQueries *database.Queries) Config {
+	return Config{
+		Resolvers: &Resolver{
+			dbQueries: dbQueries,
+		},
+	}
 }
