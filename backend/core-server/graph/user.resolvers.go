@@ -8,9 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/graph/model"
-	"github.com/google/uuid"
 )
 
 // RegisterUser is the resolver for the registerUser field.
@@ -56,27 +54,21 @@ func (r *mutationResolver) RegisterUserOAuth(ctx context.Context, input model.Re
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUserInput) (*model.User, error) {
-	// panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
-	// convert string to uuid
-	userId, err := uuid.Parse(input.UserID)
+	user, err := r.userHandler.UpdateUserHandler(ctx, &input)
 	if err != nil {
 		return nil, err
 	}
-	_, err = r.dbQueries.UpdateUser(ctx, database.UpdateUserParams{
-		UserID: userId,
-		Email:  *input.Email,
-	})
-	if err != nil {
-		return nil, err
-	}
+
+	userId := user.UserID.String()
 	return &model.User{
-		UserID:              input.UserID,
-		Email:               *input.Email,
-		LocalUsername:       input.LocalUsername,
-		LocalHashedPassword: input.LocalHashedPassword,
-		OAuthProviders:      input.OAuthProviders,
-		AccountType:         *input.AccountType,
-		WalletAddress:       input.WalletAddress,
+		UserID:              userId,
+		Email:               user.Email,
+		LocalUsername:       &user.LocalUsername,
+		LocalHashedPassword: &user.LocalPassword,
+		OAuthProviders:      &user.OauthProvider,
+		WalletAddress:       &user.WalletAddress.String,
+		RsaPublicKey:        user.RsaPublicKey.String,
+		HashedSecret:        user.HashedSecret.String,
 	}, nil
 }
 
@@ -102,18 +94,5 @@ func (r *queryResolver) LoginUser(ctx context.Context, input model.LoginUserInpu
 
 // LoginUserOAuth is the resolver for the loginUserOAuth field.
 func (r *queryResolver) LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: LoginUserOAuth - loginUserOAuth"))
-}
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginUserInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: LoginUser - loginUser"))
-}
-func (r *mutationResolver) LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.User, error) {
 	panic(fmt.Errorf("not implemented: LoginUserOAuth - loginUserOAuth"))
 }

@@ -88,3 +88,97 @@ func (u *UserHandler) RegisterUserHandler(ctx context.Context, inputNormal *mode
 	}
 	return nil, errors.New("user type not supported")
 }
+
+func (u *UserHandler) UpdateUserHandler(ctx context.Context, updateUserInput *model.UpdateUserInput) (*database.User, error) {
+	userId, err := uuid.Parse(updateUserInput.UserID)
+	if err != nil {
+		return nil, err
+	}
+	user, err := u.dbQueries.GetUserByUserId(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	if updateUserInput.LocalHashedPassword != nil {
+		cost := bcrypt.DefaultCost
+		err := godotenv.Load(".env")
+
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+
+		costFromEnv := os.Getenv("BCRYPT_COST")
+		if costFromEnv != "" {
+			costFromEnvNum, err := strconv.Atoi(costFromEnv)
+			if err == nil {
+				cost = costFromEnvNum
+			}
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(user.LocalPassword), []byte(*updateUserInput.LocalHashedPassword))
+
+		if err != nil {
+			return nil, errors.New("wrong password")
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(*updateUserInput.LocalHashedPassword), cost)
+		if err != nil {
+			return nil, errors.New("bcrypt error")
+		}
+		user.LocalPassword = string(hashedPassword)
+	}
+
+	if updateUserInput.Email != nil {
+		user.Email = *updateUserInput.Email
+	}
+
+	if updateUserInput.LocalUsername != nil {
+		user.LocalUsername = *updateUserInput.LocalUsername
+	}
+
+	if updateUserInput.OAuthProviders != nil {
+		user.OauthProvider = *updateUserInput.OAuthProviders
+	}
+
+	if updateUserInput.RsaPublicKey != nil {
+		user.RsaPublicKey.String = *updateUserInput.RsaPublicKey
+		user.RsaPublicKey.Valid = true
+	}
+
+	if updateUserInput.HashedSecret != nil {
+		user.HashedSecret.String = *updateUserInput.HashedSecret
+		user.HashedSecret.Valid = true
+	}
+
+	if updateUserInput.WalletAddress != nil {
+		user.WalletAddress.String = *updateUserInput.WalletAddress
+		user.WalletAddress.Valid = true
+	}
+
+	if updateUserInput.OAuthProviders != nil {
+		user.OauthProvider = *updateUserInput.OAuthProviders
+	}
+
+	if updateUserInput.ProfilePicture != nil {
+		user.ProfilePicture.String = *updateUserInput.ProfilePicture
+		user.ProfilePicture.Valid = true
+	}
+
+	updatedUser, err := u.dbQueries.UpdateUser(ctx, database.UpdateUserParams{
+		UserID:        user.UserID,
+		Email:         user.Email,
+		LocalUsername: user.LocalUsername,
+		LocalPassword: user.LocalPassword,
+		OauthProvider: user.OauthProvider,
+		RsaPublicKey:  user.RsaPublicKey,
+		HashedSecret:  user.HashedSecret,
+		WalletAddress: user.WalletAddress,
+		OauthID:       user.OauthID,
+		OauthName:     user.OauthName,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &updatedUser, nil
+}

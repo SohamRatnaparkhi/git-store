@@ -52,6 +52,7 @@ type UpdateUserInput struct {
 	WalletAddress       *string `json:"walletAddress,omitempty"`
 	RsaPublicKey        *string `json:"rsaPublicKey,omitempty"`
 	HashedSecret        *string `json:"hashedSecret,omitempty"`
+	ProfilePicture      *string `json:"profilePicture,omitempty"`
 }
 
 type User struct {

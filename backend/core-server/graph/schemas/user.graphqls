@@ -42,6 +42,7 @@ input UpdateUserInput {
     walletAddress: String
     rsaPublicKey: String
     hashedSecret: String
+    profilePicture: String
 }
 
 extend type Query {

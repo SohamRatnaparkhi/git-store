@@ -4072,7 +4072,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userId", "localUsername", "localHashedPassword", "oAuthProviders", "email", "accountType", "walletAddress", "rsaPublicKey", "hashedSecret"}
+	fieldsInOrder := [...]string{"userId", "localUsername", "localHashedPassword", "oAuthProviders", "email", "accountType", "walletAddress", "rsaPublicKey", "hashedSecret", "profilePicture"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4142,6 +4142,13 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.HashedSecret = data
+		case "profilePicture":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profilePicture"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProfilePicture = data
 		}
 	}
 
