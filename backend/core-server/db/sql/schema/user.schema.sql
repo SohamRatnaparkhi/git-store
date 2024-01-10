@@ -4,7 +4,7 @@ CREATE TABLE Users (
     local_password VARCHAR(255) NOT NULL,
     oauth_provider VARCHAR(255) NOT NULL,
     oauth_id VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
     oauth_name VARCHAR(255),
     wallet_address VARCHAR(255),
     profile_picture VARCHAR(255),

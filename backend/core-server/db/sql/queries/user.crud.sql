@@ -19,6 +19,9 @@ INSERT INTO users (
     $8
 ) RETURNING *;
 
+-- name: GetUserByEmail :one
+SELECT * FROM users WHERE email = $1;
+
 -- name: GetUserByLocalUsername :one
 SELECT * FROM users WHERE local_username = $1;
 
