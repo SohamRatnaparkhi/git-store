@@ -35,7 +35,23 @@ func (r *mutationResolver) RegisterUser(ctx context.Context, input model.Registe
 
 // RegisterUserOAuth is the resolver for the registerUserOAuth field.
 func (r *mutationResolver) RegisterUserOAuth(ctx context.Context, input model.RegisterUserOAuthInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: RegisterUserOAuth - registerUserOAuth"))
+	user, err := r.userHandler.RegisterUserHandler(ctx, nil, &input)
+
+	if err != nil {
+		return nil, err
+	}
+
+	userIdString := user.UserID.String()
+	return &model.User{
+		UserID:         userIdString,
+		Email:          user.Email,
+		LocalUsername:  nil,
+		OAuthProviders: nil,
+		AccountType:    input.AccountType,
+		WalletAddress:  nil,
+		RsaPublicKey:   "",
+		HashedSecret:   "",
+	}, nil
 }
 
 // UpdateUser is the resolver for the updateUser field.
