@@ -15,28 +15,21 @@ import (
 
 // RegisterUser is the resolver for the registerUser field.
 func (r *mutationResolver) RegisterUser(ctx context.Context, input model.RegisterUserInput) (*model.User, error) {
-	// panic(fmt.Errorf("not implemented: RegisterUser - registerUser"))
-	userId := uuid.New()
-	_, err := r.dbQueries.CreateUser(ctx, database.CreateUserParams{
-		Email:         input.Email,
-		UserID:        userId,
-		LocalUsername: input.LocalUsername,
-		LocalPassword: input.LocalHashedPassword,
-	})
+	user, err := r.userHandler.RegisterUserHandler(ctx, &input, nil)
 
 	if err != nil {
 		return nil, err
 	}
+	userIdString := user.UserID.String()
 	return &model.User{
-		UserID:              userId.String(),
-		Email:               input.Email,
-		LocalUsername:       &input.LocalUsername,
-		LocalHashedPassword: &input.LocalHashedPassword,
-		OAuthProviders:      nil,
-		AccountType:         input.AccountType,
-		WalletAddress:       nil,
-		RsaPublicKey:        "",
-		HashedSecret:        "",
+		UserID:         userIdString,
+		Email:          user.Email,
+		LocalUsername:  &user.LocalUsername,
+		OAuthProviders: nil,
+		AccountType:    input.AccountType,
+		WalletAddress:  nil,
+		RsaPublicKey:   "",
+		HashedSecret:   "",
 	}, nil
 }
 

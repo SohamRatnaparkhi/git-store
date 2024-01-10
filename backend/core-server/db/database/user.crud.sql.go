@@ -100,6 +100,31 @@ func (q *Queries) DeleteUser(ctx context.Context, userID uuid.UUID) (User, error
 	return i, err
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT user_id, local_username, local_password, oauth_provider, oauth_id, email, oauth_name, wallet_address, profile_picture, rsa_public_key, hashed_secret, created_at, updated_at FROM users WHERE email = $1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.LocalUsername,
+		&i.LocalPassword,
+		&i.OauthProvider,
+		&i.OauthID,
+		&i.Email,
+		&i.OauthName,
+		&i.WalletAddress,
+		&i.ProfilePicture,
+		&i.RsaPublicKey,
+		&i.HashedSecret,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserByLocalUsername = `-- name: GetUserByLocalUsername :one
 SELECT user_id, local_username, local_password, oauth_provider, oauth_id, email, oauth_name, wallet_address, profile_picture, rsa_public_key, hashed_secret, created_at, updated_at FROM users WHERE local_username = $1
 `
