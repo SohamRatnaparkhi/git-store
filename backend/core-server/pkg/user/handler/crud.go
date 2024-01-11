@@ -14,17 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserHandler struct {
-	dbQueries *database.Queries
-}
-
-func NewUserHandler(dbQueries *database.Queries) *UserHandler {
-	return &UserHandler{
-		dbQueries: dbQueries,
-	}
-}
-
-func (u *UserHandler) RegisterUserHandler(ctx context.Context, inputNormal *model.RegisterUserInput, inputOAuth *model.RegisterUserOAuthInput) (*database.User, error) {
+func (u *userHandler) RegisterUserHandler(ctx context.Context, inputNormal *model.RegisterUserInput, inputOAuth *model.RegisterUserOAuthInput) (*database.User, error) {
 
 	_, err := u.dbQueries.GetUserByEmail(ctx, inputNormal.Email)
 
@@ -89,7 +79,7 @@ func (u *UserHandler) RegisterUserHandler(ctx context.Context, inputNormal *mode
 	return nil, errors.New("user type not supported")
 }
 
-func (u *UserHandler) UpdateUserHandler(ctx context.Context, updateUserInput *model.UpdateUserInput) (*database.User, error) {
+func (u *userHandler) UpdateUserHandler(ctx context.Context, updateUserInput *model.UpdateUserInput) (*database.User, error) {
 	userId, err := uuid.Parse(updateUserInput.UserID)
 	if err != nil {
 		return nil, err
@@ -183,7 +173,7 @@ func (u *UserHandler) UpdateUserHandler(ctx context.Context, updateUserInput *mo
 	return &updatedUser, nil
 }
 
-func (u *UserHandler) DeleteUserHandler(ctx context.Context, userId string) (*database.User, error) {
+func (u *userHandler) DeleteUserHandler(ctx context.Context, userId string) (*database.User, error) {
 	userIdUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
@@ -199,7 +189,7 @@ func (u *UserHandler) DeleteUserHandler(ctx context.Context, userId string) (*da
 	return &user, nil
 }
 
-func (u *UserHandler) GetUserHandler(ctx context.Context, userId string) (*database.User, error) {
+func (u *userHandler) GetUserHandler(ctx context.Context, userId string) (*database.User, error) {
 	userIdUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
