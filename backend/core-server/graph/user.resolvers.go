@@ -61,20 +61,31 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, input model.UpdateUse
 
 	userId := user.UserID.String()
 	return &model.User{
-		UserID:              userId,
-		Email:               user.Email,
-		LocalUsername:       &user.LocalUsername,
-		LocalHashedPassword: &user.LocalPassword,
-		OAuthProviders:      &user.OauthProvider,
-		WalletAddress:       &user.WalletAddress.String,
-		RsaPublicKey:        user.RsaPublicKey.String,
-		HashedSecret:        user.HashedSecret.String,
+		UserID:         userId,
+		Email:          user.Email,
+		LocalUsername:  &user.LocalUsername,
+		OAuthProviders: &user.OauthProvider,
+		WalletAddress:  &user.WalletAddress.String,
+		RsaPublicKey:   user.RsaPublicKey.String,
+		HashedSecret:   user.HashedSecret.String,
 	}, nil
 }
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, userID string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+	user, err := r.userHandler.DeleteUserHandler(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return &model.User{
+		UserID:         user.UserID.String(),
+		Email:          user.Email,
+		LocalUsername:  &user.LocalUsername,
+		OAuthProviders: &user.OauthProvider,
+		WalletAddress:  &user.WalletAddress.String,
+		RsaPublicKey:   user.RsaPublicKey.String,
+		HashedSecret:   user.HashedSecret.String,
+	}, nil
 }
 
 // User is the resolver for the user field.
