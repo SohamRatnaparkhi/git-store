@@ -6,6 +6,7 @@ import (
 
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	user_handlers "github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/user/handler"
+	user_services "github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/user/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,8 +15,9 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	dbQueries   *database.Queries
-	userHandler user_handlers.Handlers
+	dbQueries    *database.Queries
+	userHandler  user_handlers.Handlers
+	userServices user_services.Services
 }
 
 func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
@@ -35,11 +37,12 @@ func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 
 func NewConfig(dbQueries *database.Queries) Config {
 	userHandler := user_handlers.NewUserHandler(dbQueries)
-
+	userServices := user_services.NewServices(dbQueries)
 	return Config{
 		Resolvers: &Resolver{
-			dbQueries:   dbQueries,
-			userHandler: userHandler,
+			dbQueries:    dbQueries,
+			userHandler:  userHandler,
+			userServices: userServices,
 		},
 	}
 }

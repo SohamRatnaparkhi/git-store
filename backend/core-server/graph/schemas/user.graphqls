@@ -24,7 +24,7 @@ input RegisterUserOAuthInput {
 }
 
 input LoginUserInput {
-    localUsername: String!
+    email: String!
     localHashedPassword: String!
 }
 
@@ -45,11 +45,16 @@ input UpdateUserInput {
     profilePicture: String
 }
 
+type AuthResponse {
+    token: String!
+    user: User!
+}
+
 extend type Query {
     user(userId: ID!): User
     users(pageNo: Int): [User]
-    loginUser(input: LoginUserInput!): User
-    loginUserOAuth(input: LoginUserOAuthInput!): User
+    loginUser(input: LoginUserInput!): AuthResponse
+    loginUserOAuth(input: LoginUserOAuthInput!): AuthResponse
 }
 
 extend type Mutation {

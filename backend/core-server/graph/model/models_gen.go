@@ -2,8 +2,13 @@
 
 package model
 
+type AuthResponse struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
+}
+
 type LoginUserInput struct {
-	LocalUsername       string `json:"localUsername"`
+	Email               string `json:"email"`
 	LocalHashedPassword string `json:"localHashedPassword"`
 }
 

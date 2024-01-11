@@ -99,11 +99,26 @@ func (r *queryResolver) Users(ctx context.Context, pageNo *int) ([]*model.User, 
 }
 
 // LoginUser is the resolver for the loginUser field.
-func (r *queryResolver) LoginUser(ctx context.Context, input model.LoginUserInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: LoginUser - loginUser"))
+func (r *queryResolver) LoginUser(ctx context.Context, input model.LoginUserInput) (*model.AuthResponse, error) {
+	token, user, err := r.userServices.LoginUser(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &model.AuthResponse{
+		Token: token,
+		User: &model.User{
+			UserID:         user.UserID.String(),
+			Email:          user.Email,
+			LocalUsername:  &user.LocalUsername,
+			OAuthProviders: &user.OauthProvider,
+			WalletAddress:  &user.WalletAddress.String,
+			RsaPublicKey:   user.RsaPublicKey.String,
+			HashedSecret:   user.HashedSecret.String,
+		},
+	}, nil
 }
 
 // LoginUserOAuth is the resolver for the loginUserOAuth field.
-func (r *queryResolver) LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.User, error) {
+func (r *queryResolver) LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.AuthResponse, error) {
 	panic(fmt.Errorf("not implemented: LoginUserOAuth - loginUserOAuth"))
 }
