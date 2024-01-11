@@ -198,3 +198,15 @@ func (u *UserHandler) DeleteUserHandler(ctx context.Context, userId string) (*da
 	}
 	return &user, nil
 }
+
+func (u *UserHandler) GetUserHandler(ctx context.Context, userId string) (*database.User, error) {
+	userIdUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+	user, err := u.dbQueries.GetUserByUserId(ctx, userIdUUID)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

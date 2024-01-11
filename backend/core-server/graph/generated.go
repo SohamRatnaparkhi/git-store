@@ -60,7 +60,7 @@ type ComplexityRoot struct {
 		LoginUserOAuth func(childComplexity int, input model.LoginUserOAuthInput) int
 		Todos          func(childComplexity int) int
 		User           func(childComplexity int, userID string) int
-		Users          func(childComplexity int) int
+		Users          func(childComplexity int, pageNo *int) int
 	}
 
 	Todo struct {
@@ -98,7 +98,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Todos(ctx context.Context) ([]*model.Todo, error)
 	User(ctx context.Context, userID string) (*model.User, error)
-	Users(ctx context.Context) ([]*model.User, error)
+	Users(ctx context.Context, pageNo *int) ([]*model.User, error)
 	LoginUser(ctx context.Context, input model.LoginUserInput) (*model.User, error)
 	LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.User, error)
 }
@@ -230,7 +230,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Users(childComplexity), true
+		args, err := ec.field_Query_users_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Users(childComplexity, args["pageNo"].(*int)), true
 
 	case "Todo.done":
 		if e.complexity.Todo.Done == nil {
@@ -600,6 +605,21 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["userId"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_users_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *int
+	if tmp, ok := rawArgs["pageNo"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pageNo"))
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pageNo"] = arg0
 	return args, nil
 }
 
@@ -1134,7 +1154,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Users(rctx)
+		return ec.resolvers.Query().Users(rctx, fc.Args["pageNo"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1177,6 +1197,17 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_users_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -5286,6 +5317,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
 	return res
 }
 

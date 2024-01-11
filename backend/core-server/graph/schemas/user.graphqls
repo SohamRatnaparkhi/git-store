@@ -47,7 +47,7 @@ input UpdateUserInput {
 
 extend type Query {
     user(userId: ID!): User
-    users: [User]
+    users(pageNo: Int): [User]
     loginUser(input: LoginUserInput!): User
     loginUserOAuth(input: LoginUserOAuthInput!): User
 }

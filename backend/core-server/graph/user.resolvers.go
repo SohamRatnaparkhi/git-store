@@ -90,11 +90,11 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, userID string) (*mode
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, userID string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+func (r *queryResolver) Users(ctx context.Context, pageNo *int) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented: Users - users"))
 }
 

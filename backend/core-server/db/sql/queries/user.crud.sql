@@ -59,3 +59,9 @@ WHERE user_id = $1 RETURNING *;
 
 -- name: DeleteUser :one
 DELETE FROM users WHERE user_id = $1 RETURNING *;
+
+--- name: GetUsers :many
+SELECT * FROM users;
+
+-- name: GetUsersByPage :many
+SELECT * FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2;
