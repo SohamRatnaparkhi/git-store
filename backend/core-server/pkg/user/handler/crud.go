@@ -9,6 +9,7 @@ import (
 
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/graph/model"
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/middlewares"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
@@ -84,6 +85,12 @@ func (u *userHandler) UpdateUserHandler(ctx context.Context, updateUserInput *mo
 	if err != nil {
 		return nil, err
 	}
+
+	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	if userFromContext.UserID != userId {
+		return nil, errors.New("unauthorized")
+	}
+
 	user, err := u.dbQueries.GetUserByUserId(ctx, userId)
 	if err != nil {
 		return nil, err
@@ -195,6 +202,14 @@ func (u *userHandler) GetUserHandler(ctx context.Context, userId string) (*datab
 		return nil, err
 	}
 	user, err := u.dbQueries.GetUserByUserId(ctx, userIdUUID)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (u *userHandler) GetUserByEmailHandler(ctx context.Context, email string) (*database.User, error) {
+	user, err := u.dbQueries.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}

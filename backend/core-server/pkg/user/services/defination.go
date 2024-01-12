@@ -10,7 +10,7 @@ import (
 )
 
 type credential struct {
-	email    string
+	Email    string
 	password string
 }
 

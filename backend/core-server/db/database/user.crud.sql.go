@@ -200,6 +200,52 @@ func (q *Queries) GetUserByUserId(ctx context.Context, userID uuid.UUID) (User, 
 	return i, err
 }
 
+const getUsersByPage = `-- name: GetUsersByPage :many
+SELECT user_id, local_username, local_password, oauth_provider, oauth_id, email, oauth_name, wallet_address, profile_picture, rsa_public_key, hashed_secret, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2
+`
+
+type GetUsersByPageParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) GetUsersByPage(ctx context.Context, arg GetUsersByPageParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersByPage, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.UserID,
+			&i.LocalUsername,
+			&i.LocalPassword,
+			&i.OauthProvider,
+			&i.OauthID,
+			&i.Email,
+			&i.OauthName,
+			&i.WalletAddress,
+			&i.ProfilePicture,
+			&i.RsaPublicKey,
+			&i.HashedSecret,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateUser = `-- name: UpdateUser :one
 UPDATE users SET
     local_username = $2,

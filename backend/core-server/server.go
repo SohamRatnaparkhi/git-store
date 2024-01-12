@@ -14,6 +14,7 @@ import (
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/graph"
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/middlewares"
 )
 
 const defaultPort = "8087"
@@ -71,7 +72,8 @@ func main() {
 	// Setting up Gin
 	r := gin.Default()
 	r.Use(cors.Default())
-	r.POST("/query", graphqlHandler(*dbQueries))
+	// r.Any("/query", middlewares.Middleware())
+	r.POST("/query", middlewares.Middleware(), graphqlHandler(*dbQueries))
 	r.GET("/", playgroundHandler())
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)

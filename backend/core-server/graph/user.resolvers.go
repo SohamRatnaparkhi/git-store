@@ -93,6 +93,11 @@ func (r *queryResolver) User(ctx context.Context, userID string) (*model.User, e
 	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
+// UserByEmail is the resolver for the userByEmail field.
+func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UserByEmail - userByEmail"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, pageNo *int) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented: Users - users"))

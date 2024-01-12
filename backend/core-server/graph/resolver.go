@@ -2,9 +2,12 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/SohamRatnaparkhi/git-store/backend/core-server/db/database"
+	"github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/middlewares"
 	user_handlers "github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/user/handler"
 	user_services "github.com/SohamRatnaparkhi/git-store/backend/core-server/pkg/user/services"
 	"github.com/gin-gonic/gin"
@@ -38,11 +41,28 @@ func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 func NewConfig(dbQueries *database.Queries) Config {
 	userHandler := user_handlers.NewUserHandler(dbQueries)
 	userServices := user_services.NewServices(dbQueries)
-	return Config{
+
+	config := Config{
 		Resolvers: &Resolver{
 			dbQueries:    dbQueries,
 			userHandler:  userHandler,
 			userServices: userServices,
 		},
 	}
+
+	config.Directives.Authorized = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+		token := ctx.Value(middlewares.UserAuthKey).(string)
+		cred, err := userServices.ValidateJwt(token)
+		if err != nil {
+			return nil, err
+		}
+		user, err := userHandler.GetUserByEmailHandler(ctx, cred.Email)
+		if err != nil {
+			return nil, errors.New("user does not exist")
+		}
+		ctx = context.WithValue(ctx, middlewares.UserClaims, user)
+		return next(ctx)
+	}
+
+	return config
 }

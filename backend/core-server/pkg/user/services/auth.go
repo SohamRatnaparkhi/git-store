@@ -22,13 +22,12 @@ func (u *userServices) LoginUser(ctx context.Context, input model.LoginUserInput
 	}
 
 	token, err := u.GetJwt(credential{
-		email:    user.Email,
+		Email:    user.Email,
 		password: user.LocalPassword,
 	})
 
 	if err != nil {
 		return "", nil, errors.New("error in generating JWT")
 	}
-
 	return token, &user, nil
 }

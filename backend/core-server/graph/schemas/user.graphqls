@@ -1,3 +1,5 @@
+directive @authorized on FIELD_DEFINITION
+
 type User {
     userId: ID!
     localUsername: String
@@ -51,7 +53,8 @@ type AuthResponse {
 }
 
 extend type Query {
-    user(userId: ID!): User
+    user(userId: ID!): User @authorized
+    userByEmail(email: String!): User
     users(pageNo: Int): [User]
     loginUser(input: LoginUserInput!): AuthResponse
     loginUserOAuth(input: LoginUserOAuthInput!): AuthResponse
@@ -60,6 +63,6 @@ extend type Query {
 extend type Mutation {
     registerUser(input: RegisterUserInput!): User
     registerUserOAuth(input: RegisterUserOAuthInput!): User
-    updateUser(input: UpdateUserInput!): User
-    deleteUser(userId: ID!): User
+    updateUser(input: UpdateUserInput!): User @authorized
+    deleteUser(userId: ID!): User @authorized
 }
