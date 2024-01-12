@@ -93,11 +93,6 @@ func (r *queryResolver) User(ctx context.Context, userID string) (*model.User, e
 	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
-// UserByEmail is the resolver for the userByEmail field.
-func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UserByEmail - userByEmail"))
-}
-
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, pageNo *int) ([]*model.User, error) {
 	panic(fmt.Errorf("not implemented: Users - users"))
@@ -126,4 +121,14 @@ func (r *queryResolver) LoginUser(ctx context.Context, input model.LoginUserInpu
 // LoginUserOAuth is the resolver for the loginUserOAuth field.
 func (r *queryResolver) LoginUserOAuth(ctx context.Context, input model.LoginUserOAuthInput) (*model.AuthResponse, error) {
 	panic(fmt.Errorf("not implemented: LoginUserOAuth - loginUserOAuth"))
+}
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) UserByEmail(ctx context.Context, email string) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: UserByEmail - userByEmail"))
 }

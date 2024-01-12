@@ -81,12 +81,8 @@ func (u *userHandler) RegisterUserHandler(ctx context.Context, inputNormal *mode
 }
 
 func (u *userHandler) UpdateUserHandler(ctx context.Context, updateUserInput *model.UpdateUserInput) (*database.User, error) {
-	userId, err := uuid.Parse(updateUserInput.UserID)
-	if err != nil {
-		return nil, err
-	}
-
 	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	userId := userFromContext.UserID
 	if userFromContext.UserID != userId {
 		return nil, errors.New("unauthorized")
 	}
@@ -185,6 +181,12 @@ func (u *userHandler) DeleteUserHandler(ctx context.Context, userId string) (*da
 	if err != nil {
 		return nil, err
 	}
+
+	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	if userFromContext.UserID != userIdUUID {
+		return nil, errors.New("unauthorized")
+	}
+
 	user, err := u.dbQueries.GetUserByUserId(ctx, userIdUUID)
 	if err != nil {
 		return nil, err
@@ -198,6 +200,10 @@ func (u *userHandler) DeleteUserHandler(ctx context.Context, userId string) (*da
 
 func (u *userHandler) GetUserHandler(ctx context.Context, userId string) (*database.User, error) {
 	userIdUUID, err := uuid.Parse(userId)
+	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	if userFromContext.UserID != userIdUUID {
+		return nil, errors.New("unauthorized")
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -35,7 +35,6 @@ input LoginUserOAuthInput {
 }
 
 input UpdateUserInput {
-    userId: ID!
     localUsername: String
     localHashedPassword: String
     oAuthProviders: String
@@ -54,7 +53,6 @@ type AuthResponse {
 
 extend type Query {
     user(userId: ID!): User @authorized
-    userByEmail(email: String!): User
     users(pageNo: Int): [User]
     loginUser(input: LoginUserInput!): AuthResponse
     loginUserOAuth(input: LoginUserOAuthInput!): AuthResponse

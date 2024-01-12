@@ -48,7 +48,6 @@ type Todo struct {
 }
 
 type UpdateUserInput struct {
-	UserID              string  `json:"userId"`
 	LocalUsername       *string `json:"localUsername,omitempty"`
 	LocalHashedPassword *string `json:"localHashedPassword,omitempty"`
 	OAuthProviders      *string `json:"oAuthProviders,omitempty"`
