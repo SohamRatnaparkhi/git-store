@@ -55,3 +55,6 @@ SELECT * FROM repository WHERE user_id = $1 AND platform = $2 AND is_backup = $3
 
 -- name: GetReposByUserIdAndPlatformAndIsRelease :many
 SELECT * FROM repository WHERE user_id = $1 AND platform = $2 AND is_release = $3;
+
+-- name: GetReposByUserIdAndName :many
+SELECT * FROM repository WHERE user_id = $1 AND name = $2;
