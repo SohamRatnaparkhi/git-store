@@ -37,7 +37,11 @@ func (r *queryResolver) GetRepos(ctx context.Context, pageNo *int, pageSize *int
 
 // Repo is the resolver for the repo field.
 func (r *queryResolver) Repo(ctx context.Context, repoID *string, url *string) (*model.RepoResponse, error) {
-	panic(fmt.Errorf("not implemented: Repo - repo"))
+	repo, err := r.repoHandlers.GetRepoHandler(ctx, repoID, url)
+	if err != nil {
+		return nil, err
+	}
+	return repo, nil
 }
 
 // Repos is the resolver for the repos field.

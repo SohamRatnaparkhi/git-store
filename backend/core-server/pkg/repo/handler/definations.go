@@ -9,6 +9,7 @@ import (
 
 type Handlers interface {
 	CreateRepoHandler(ctx context.Context, input model.CreateRepoInput) (*model.RepoResponse, error)
+	GetRepoHandler(ctx context.Context, repoID *string, url *string) (*model.RepoResponse, error)
 }
 
 type repoHandlers struct {
