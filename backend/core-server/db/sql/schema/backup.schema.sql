@@ -9,5 +9,5 @@ CREATE TABLE
         commit_sha VARCHAR(255) NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (repo_id) REFERENCES Repository(repo_id)
+        FOREIGN KEY (repo_id) REFERENCES Repository(repo_id) ON DELETE CASCADE
     )
