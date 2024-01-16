@@ -7,12 +7,13 @@ dotenv.config();
 const client = new S3Client({
     region: process.env.S3_BUCKET_REGION || "",
     credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID || "",
+        accessKeyId: process.env.S3_ACCESS_KEY || "",
         secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || "",
     },
 });
 
 export const putObject = async (key: string, filePath: string) => {
+    console.log(process.env.S3_ACCESS_KEY, process.env.S3_SECRET_ACCESS_KEY, process.env.S3_BUCKET_NAME, process.env.S3_BUCKET_REGION)
     const command = new PutObjectCommand({
         Bucket: process.env.S3_BUCKET_NAME,
         Key: key,
