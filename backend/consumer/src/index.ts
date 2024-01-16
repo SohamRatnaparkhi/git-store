@@ -1,3 +1,4 @@
+import axios from 'axios';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import crypto from 'crypto';
@@ -120,6 +121,6 @@ const server = http.createServer(app);
 
 server.listen(PORT, async () => {
     console.log(`Server is listening on port ${PORT}!`);
-    // const { data } = await axios.get(`http://localhost:${PORT}/kafka`);
-    // console.log(data);
+    const { data } = await axios.get(`http://localhost:${PORT}/kafka`);
+    console.log(data);
 });
