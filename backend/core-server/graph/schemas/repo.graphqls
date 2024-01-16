@@ -1,0 +1,85 @@
+directive @restricted on FIELD_DEFINITION
+
+enum Visibility {
+    PUBLIC
+    PRIVATE
+}
+
+type Repo {
+    repo_id: ID!
+    user_id: ID!
+    name: String!
+    url: String!
+    platform: String!
+    visibility: Visibility!
+    is_release: Boolean!
+    is_backup: Boolean!
+    description: String
+    created_at: String
+    updated_at: String
+}
+
+type RepoList {
+    repos: [Repo]
+    total: Int
+}
+
+type RepoListResponse {
+    success: Boolean!
+    message: String
+    data: RepoList
+    pageNo: Int
+}
+
+type RepoResponse {
+    success: Boolean!
+    message: String
+    data: Repo
+}
+
+input CreateRepoInput {
+    user_id: ID!
+    name: String!
+    url: String!
+    platform: String!
+    visibility: Visibility!
+    is_release: Boolean!
+    is_backup: Boolean!
+    description: String
+}
+
+input UpdateRepoInput {
+    name: String
+    url: String
+    platform: String
+    visibility: Visibility
+    is_release: Boolean
+    is_backup: Boolean
+    description: String
+}
+
+input RepoFilterInput {
+    user_id: ID!
+    visibility: Visibility
+    is_release: Boolean
+    is_backup: Boolean
+    platform: String
+    name: String
+}
+
+
+extend type Query {
+    getRepos(pageNo: Int, pageSize: Int): RepoListResponse @restricted
+}
+
+extend type Query {
+    repo (repo_id: ID, url: String): RepoResponse @authorized
+    repos (input: RepoFilterInput,  pageNo: Int, pageSize: Int): RepoListResponse @authorized
+}
+
+extend type Mutation {
+    createRepo(input: CreateRepoInput!): RepoResponse @authorized
+    updateRepo(repo_id: ID!, input: UpdateRepoInput!): RepoResponse @authorized
+    deleteRepo(repo_id: ID!): RepoResponse @authorized
+}
+

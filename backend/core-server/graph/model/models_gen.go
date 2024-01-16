@@ -2,9 +2,26 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+)
+
 type AuthResponse struct {
 	Token string `json:"token"`
 	User  *User  `json:"user"`
+}
+
+type CreateRepoInput struct {
+	UserID      string     `json:"user_id"`
+	Name        string     `json:"name"`
+	URL         string     `json:"url"`
+	Platform    string     `json:"platform"`
+	Visibility  Visibility `json:"visibility"`
+	IsRelease   bool       `json:"is_release"`
+	IsBackup    bool       `json:"is_backup"`
+	Description *string    `json:"description,omitempty"`
 }
 
 type LoginUserInput struct {
@@ -40,11 +57,62 @@ type RegisterUserOAuthInput struct {
 	AccountType    string `json:"accountType"`
 }
 
+type Repo struct {
+	RepoID      string     `json:"repo_id"`
+	UserID      string     `json:"user_id"`
+	Name        string     `json:"name"`
+	URL         string     `json:"url"`
+	Platform    string     `json:"platform"`
+	Visibility  Visibility `json:"visibility"`
+	IsRelease   bool       `json:"is_release"`
+	IsBackup    bool       `json:"is_backup"`
+	Description *string    `json:"description,omitempty"`
+	CreatedAt   *string    `json:"created_at,omitempty"`
+	UpdatedAt   *string    `json:"updated_at,omitempty"`
+}
+
+type RepoFilterInput struct {
+	UserID     string      `json:"user_id"`
+	Visibility *Visibility `json:"visibility,omitempty"`
+	IsRelease  *bool       `json:"is_release,omitempty"`
+	IsBackup   *bool       `json:"is_backup,omitempty"`
+	Platform   *string     `json:"platform,omitempty"`
+	Name       *string     `json:"name,omitempty"`
+}
+
+type RepoList struct {
+	Repos []*Repo `json:"repos,omitempty"`
+	Total *int    `json:"total,omitempty"`
+}
+
+type RepoListResponse struct {
+	Success bool      `json:"success"`
+	Message *string   `json:"message,omitempty"`
+	Data    *RepoList `json:"data,omitempty"`
+	PageNo  *int      `json:"pageNo,omitempty"`
+}
+
+type RepoResponse struct {
+	Success bool    `json:"success"`
+	Message *string `json:"message,omitempty"`
+	Data    *Repo   `json:"data,omitempty"`
+}
+
 type Todo struct {
 	ID   string    `json:"id"`
 	Text string    `json:"text"`
 	Done bool      `json:"done"`
 	User *UserCopy `json:"user"`
+}
+
+type UpdateRepoInput struct {
+	Name        *string     `json:"name,omitempty"`
+	URL         *string     `json:"url,omitempty"`
+	Platform    *string     `json:"platform,omitempty"`
+	Visibility  *Visibility `json:"visibility,omitempty"`
+	IsRelease   *bool       `json:"is_release,omitempty"`
+	IsBackup    *bool       `json:"is_backup,omitempty"`
+	Description *string     `json:"description,omitempty"`
 }
 
 type UpdateUserInput struct {
@@ -74,4 +142,45 @@ type User struct {
 type UserCopy struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type Visibility string
+
+const (
+	VisibilityPublic  Visibility = "PUBLIC"
+	VisibilityPrivate Visibility = "PRIVATE"
+)
+
+var AllVisibility = []Visibility{
+	VisibilityPublic,
+	VisibilityPrivate,
+}
+
+func (e Visibility) IsValid() bool {
+	switch e {
+	case VisibilityPublic, VisibilityPrivate:
+		return true
+	}
+	return false
+}
+
+func (e Visibility) String() string {
+	return string(e)
+}
+
+func (e *Visibility) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Visibility(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Visibility", str)
+	}
+	return nil
+}
+
+func (e Visibility) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

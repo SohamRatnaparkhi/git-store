@@ -5,6 +5,6 @@ CREATE TABLE
         user_id UUID NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (release_id) REFERENCES Release(release_id),
-        FOREIGN KEY (user_id) REFERENCES Users(user_id)
+        FOREIGN KEY (release_id) REFERENCES Release(release_id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
     )
