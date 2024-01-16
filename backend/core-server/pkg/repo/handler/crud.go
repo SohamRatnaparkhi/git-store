@@ -80,3 +80,83 @@ func (r *repoHandlers) GetRepoHandler(ctx context.Context, repoID *string, url *
 
 	return nil, errors.New("invalid input")
 }
+
+func (r *repoHandlers) UpdateRepoHandler(ctx context.Context, repoId string, input model.UpdateRepoInput) (*model.RepoResponse, error) {
+	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	repoIdUUID, err := uuid.Parse(repoId)
+	if err != nil {
+		return nil, errors.New("invalid repo id")
+	}
+	repo, err := r.dbQueries.GetRepositoryByRepoId(ctx, repoIdUUID)
+	if err != nil || repo.UserID != userFromContext.UserID {
+		return nil, errors.New("unauthorized")
+	}
+
+	if input.Name != nil {
+		repo.Name = *input.Name
+	}
+
+	if input.Description != nil {
+		repo.Description = sql.NullString{
+			String: *input.Description,
+			Valid:  true,
+		}
+	}
+
+	if input.IsRelease != nil {
+		repo.IsRelease = *input.IsRelease
+	}
+
+	if input.IsBackup != nil {
+		repo.IsBackup = *input.IsBackup
+	}
+
+	if input.Visibility != nil {
+		repo.Visibility = input.Visibility.String()
+	}
+
+	if input.URL != nil {
+		repo.Url = sql.NullString{
+			String: *input.URL,
+			Valid:  true,
+		}
+	}
+
+	if input.Platform != nil {
+		repo.Platform = *input.Platform
+	}
+
+	repo, err = r.dbQueries.UpdateRepoByRepoId(ctx, database.UpdateRepoByRepoIdParams{
+		RepoID:      repoIdUUID,
+		Name:        repo.Name,
+		Url:         repo.Url,
+		Platform:    repo.Platform,
+		Visibility:  repo.Visibility,
+		IsRelease:   repo.IsRelease,
+		IsBackup:    repo.IsBackup,
+		Description: repo.Description,
+	})
+
+	if err != nil {
+		return utils.MapRepository(database.Repository{}, false, err.Error()), nil
+	}
+
+	return utils.MapRepository(repo, true, "repo updated successfully"), nil
+}
+
+func (r *repoHandlers) DeleteRepoHandler(ctx context.Context, repoId string) (*model.RepoResponse, error) {
+	userFromContext := ctx.Value(middlewares.UserClaims).(*database.User)
+	repoIdUUID, err := uuid.Parse(repoId)
+	if err != nil {
+		return nil, errors.New("invalid repo id")
+	}
+	repo, err := r.dbQueries.GetRepositoryByRepoId(ctx, repoIdUUID)
+	if err != nil || repo.UserID != userFromContext.UserID {
+		return nil, errors.New("unauthorized")
+	}
+	repo, err = r.dbQueries.DeleteRepoByRepoId(ctx, repoIdUUID)
+	if err != nil {
+		return utils.MapRepository(database.Repository{}, false, err.Error()), nil
+	}
+	return utils.MapRepository(repo, true, "repo deleted successfully"), nil
+}

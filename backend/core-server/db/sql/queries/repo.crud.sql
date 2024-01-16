@@ -58,3 +58,19 @@ SELECT * FROM repository WHERE user_id = $1 AND platform = $2 AND is_release = $
 
 -- name: GetReposByUserIdAndName :many
 SELECT * FROM repository WHERE user_id = $1 AND name = $2;
+
+-- name: UpdateRepoByRepoId :one
+UPDATE repository SET
+    name = $2,
+    url = $3,
+    platform = $4,
+    visibility = $5,
+    is_release = $6,
+    is_backup = $7,
+    description = $8,
+    updated_at = CURRENT_TIMESTAMP
+WHERE repo_id = $1
+RETURNING *;
+
+-- name: DeleteRepoByRepoId :one
+DELETE FROM repository WHERE repo_id = $1 RETURNING *;

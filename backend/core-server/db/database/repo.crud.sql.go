@@ -77,6 +77,29 @@ func (q *Queries) CreateRepository(ctx context.Context, arg CreateRepositoryPara
 	return i, err
 }
 
+const deleteRepoByRepoId = `-- name: DeleteRepoByRepoId :one
+DELETE FROM repository WHERE repo_id = $1 RETURNING repo_id, user_id, name, url, platform, visibility, is_release, is_backup, description, created_at, updated_at
+`
+
+func (q *Queries) DeleteRepoByRepoId(ctx context.Context, repoID uuid.UUID) (Repository, error) {
+	row := q.db.QueryRowContext(ctx, deleteRepoByRepoId, repoID)
+	var i Repository
+	err := row.Scan(
+		&i.RepoID,
+		&i.UserID,
+		&i.Name,
+		&i.Url,
+		&i.Platform,
+		&i.Visibility,
+		&i.IsRelease,
+		&i.IsBackup,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getRepoByURl = `-- name: GetRepoByURl :one
 SELECT repo_id, user_id, name, url, platform, visibility, is_release, is_backup, description, created_at, updated_at FROM repository WHERE url = $1
 `
@@ -558,4 +581,57 @@ func (q *Queries) GetUserRepository(ctx context.Context, userID uuid.UUID) ([]Re
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateRepoByRepoId = `-- name: UpdateRepoByRepoId :one
+UPDATE repository SET
+    name = $2,
+    url = $3,
+    platform = $4,
+    visibility = $5,
+    is_release = $6,
+    is_backup = $7,
+    description = $8,
+    updated_at = CURRENT_TIMESTAMP
+WHERE repo_id = $1
+RETURNING repo_id, user_id, name, url, platform, visibility, is_release, is_backup, description, created_at, updated_at
+`
+
+type UpdateRepoByRepoIdParams struct {
+	RepoID      uuid.UUID
+	Name        string
+	Url         sql.NullString
+	Platform    string
+	Visibility  string
+	IsRelease   bool
+	IsBackup    bool
+	Description sql.NullString
+}
+
+func (q *Queries) UpdateRepoByRepoId(ctx context.Context, arg UpdateRepoByRepoIdParams) (Repository, error) {
+	row := q.db.QueryRowContext(ctx, updateRepoByRepoId,
+		arg.RepoID,
+		arg.Name,
+		arg.Url,
+		arg.Platform,
+		arg.Visibility,
+		arg.IsRelease,
+		arg.IsBackup,
+		arg.Description,
+	)
+	var i Repository
+	err := row.Scan(
+		&i.RepoID,
+		&i.UserID,
+		&i.Name,
+		&i.Url,
+		&i.Platform,
+		&i.Visibility,
+		&i.IsRelease,
+		&i.IsBackup,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

@@ -10,6 +10,8 @@ import (
 type Handlers interface {
 	CreateRepoHandler(ctx context.Context, input model.CreateRepoInput) (*model.RepoResponse, error)
 	GetRepoHandler(ctx context.Context, repoID *string, url *string) (*model.RepoResponse, error)
+	UpdateRepoHandler(ctx context.Context, repoId string, input model.UpdateRepoInput) (*model.RepoResponse, error)
+	DeleteRepoHandler(ctx context.Context, repoId string) (*model.RepoResponse, error)
 }
 
 type repoHandlers struct {

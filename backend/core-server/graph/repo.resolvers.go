@@ -22,12 +22,20 @@ func (r *mutationResolver) CreateRepo(ctx context.Context, input model.CreateRep
 
 // UpdateRepo is the resolver for the updateRepo field.
 func (r *mutationResolver) UpdateRepo(ctx context.Context, repoID string, input model.UpdateRepoInput) (*model.RepoResponse, error) {
-	panic(fmt.Errorf("not implemented: UpdateRepo - updateRepo"))
+	repo, err := r.repoHandlers.UpdateRepoHandler(ctx, repoID, input)
+	if err != nil {
+		return nil, err
+	}
+	return repo, nil
 }
 
 // DeleteRepo is the resolver for the deleteRepo field.
 func (r *mutationResolver) DeleteRepo(ctx context.Context, repoID string) (*model.RepoResponse, error) {
-	panic(fmt.Errorf("not implemented: DeleteRepo - deleteRepo"))
+	repo, err := r.repoHandlers.DeleteRepoHandler(ctx, repoID)
+	if err != nil {
+		return nil, err
+	}
+	return repo, nil
 }
 
 // GetRepos is the resolver for the getRepos field.
@@ -51,14 +59,4 @@ func (r *queryResolver) Repos(ctx context.Context, input *model.RepoFilterInput,
 		return nil, err
 	}
 	return repos, nil
-}
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *queryResolver) GetRepo(ctx context.Context, repoID string) (*model.RepoResponse, error) {
-	panic(fmt.Errorf("not implemented: GetRepo - getRepo"))
 }
