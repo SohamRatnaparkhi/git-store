@@ -25,7 +25,7 @@ type Backup struct {
 
 type Comment struct {
 	CommentID uuid.UUID
-	ReleaseID uuid.UUID
+	ProductID uuid.UUID
 	UserID    uuid.UUID
 	Comment   string
 	CreatedAt time.Time
@@ -34,15 +34,33 @@ type Comment struct {
 
 type Like struct {
 	LikeID    uuid.UUID
-	ReleaseID uuid.UUID
+	ProductID uuid.UUID
 	UserID    uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
+type Product struct {
+	ProductID        uuid.UUID
+	UserID           uuid.UUID
+	Name             string
+	ProductKind      string
+	IsPaid           bool
+	Price            string
+	TransactionMode  string
+	ShortDescription string
+	LongDescription  sql.NullString
+	Images           sql.NullString
+	TimesDownloaded  int32
+	AverageRating    string
+	ProductType      string
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+}
+
 type Rating struct {
 	RatingID  uuid.UUID
-	ReleaseID uuid.UUID
+	ProductID uuid.UUID
 	UserID    uuid.UUID
 	Rating    string
 	CreatedAt time.Time
@@ -50,36 +68,29 @@ type Rating struct {
 }
 
 type Release struct {
-	ReleaseID        uuid.UUID
-	RepoID           uuid.UUID
-	Version          string
-	ReleaseDate      time.Time
-	IsPaid           bool
-	Price            string
-	TransactionMode  string
-	ShortDescription string
-	LongDescription  sql.NullString
-	Changelog        sql.NullString
-	Images           sql.NullString
-	TimesDownloaded  int32
-	AverageRating    string
-	ReleaseType      string
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
+	ReleaseID   uuid.UUID
+	Version     string
+	ReleaseDate time.Time
+	Changelog   sql.NullString
+	ReleaseType string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type Repository struct {
-	RepoID      uuid.UUID
-	UserID      uuid.UUID
-	Name        string
-	Url         sql.NullString
-	Platform    string
-	Visibility  string
-	IsRelease   bool
-	IsBackup    bool
-	Description sql.NullString
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	RepoID         uuid.UUID
+	InstallationID uuid.UUID
+	UserID         uuid.UUID
+	Name           string
+	Url            sql.NullString
+	Platform       string
+	Visibility     string
+	IsRelease      bool
+	IsBackup       bool
+	IsApp          bool
+	Description    sql.NullString
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 type User struct {

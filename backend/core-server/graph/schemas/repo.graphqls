@@ -8,6 +8,7 @@ enum Visibility {
 type Repo {
     repo_id: ID!
     user_id: ID!
+    installation_id: ID!
     name: String!
     url: String!
     platform: String!
@@ -41,6 +42,7 @@ input CreateRepoInput {
     user_id: ID!
     name: String!
     url: String!
+    installation_id: ID!
     platform: String!
     visibility: Visibility!
     is_release: Boolean!
@@ -51,6 +53,7 @@ input CreateRepoInput {
 input UpdateRepoInput {
     name: String
     url: String
+    installation_id: ID
     platform: String
     visibility: Visibility
     is_release: Boolean

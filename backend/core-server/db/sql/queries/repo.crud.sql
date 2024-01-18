@@ -1,6 +1,7 @@
 -- name: CreateRepository :one
 INSERT INTO repository (
     repo_id,
+    installation_id,
     user_id,
     name,
     url,
@@ -18,7 +19,8 @@ INSERT INTO repository (
     $6,
     $7,
     $8,
-    $9
+    $9,
+    $10
 ) RETURNING *;
 
 -- name: GetRepositoryByRepoId :one

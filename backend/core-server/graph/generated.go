@@ -77,17 +77,18 @@ type ComplexityRoot struct {
 	}
 
 	Repo struct {
-		CreatedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		IsBackup    func(childComplexity int) int
-		IsRelease   func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Platform    func(childComplexity int) int
-		RepoID      func(childComplexity int) int
-		URL         func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-		Visibility  func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		Description    func(childComplexity int) int
+		InstallationID func(childComplexity int) int
+		IsBackup       func(childComplexity int) int
+		IsRelease      func(childComplexity int) int
+		Name           func(childComplexity int) int
+		Platform       func(childComplexity int) int
+		RepoID         func(childComplexity int) int
+		URL            func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+		Visibility     func(childComplexity int) int
 	}
 
 	RepoList struct {
@@ -387,6 +388,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Repo.Description(childComplexity), true
+
+	case "Repo.installation_id":
+		if e.complexity.Repo.InstallationID == nil {
+			break
+		}
+
+		return e.complexity.Repo.InstallationID(childComplexity), true
 
 	case "Repo.is_backup":
 		if e.complexity.Repo.IsBackup == nil {
@@ -2613,6 +2621,50 @@ func (ec *executionContext) fieldContext_Repo_user_id(ctx context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Repo_installation_id(ctx context.Context, field graphql.CollectedField, obj *model.Repo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Repo_installation_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InstallationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Repo_installation_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Repo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Repo_name(ctx context.Context, field graphql.CollectedField, obj *model.Repo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Repo_name(ctx, field)
 	if err != nil {
@@ -3040,6 +3092,8 @@ func (ec *executionContext) fieldContext_RepoList_repos(ctx context.Context, fie
 				return ec.fieldContext_Repo_repo_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Repo_user_id(ctx, field)
+			case "installation_id":
+				return ec.fieldContext_Repo_installation_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Repo_name(ctx, field)
 			case "url":
@@ -3404,6 +3458,8 @@ func (ec *executionContext) fieldContext_RepoResponse_data(ctx context.Context, 
 				return ec.fieldContext_Repo_repo_id(ctx, field)
 			case "user_id":
 				return ec.fieldContext_Repo_user_id(ctx, field)
+			case "installation_id":
+				return ec.fieldContext_Repo_installation_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Repo_name(ctx, field)
 			case "url":
@@ -5863,7 +5919,7 @@ func (ec *executionContext) unmarshalInputCreateRepoInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"user_id", "name", "url", "platform", "visibility", "is_release", "is_backup", "description"}
+	fieldsInOrder := [...]string{"user_id", "name", "url", "installation_id", "platform", "visibility", "is_release", "is_backup", "description"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5891,6 +5947,13 @@ func (ec *executionContext) unmarshalInputCreateRepoInput(ctx context.Context, o
 				return it, err
 			}
 			it.URL = data
+		case "installation_id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("installation_id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InstallationID = data
 		case "platform":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -6185,7 +6248,7 @@ func (ec *executionContext) unmarshalInputUpdateRepoInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "url", "platform", "visibility", "is_release", "is_backup", "description"}
+	fieldsInOrder := [...]string{"name", "url", "installation_id", "platform", "visibility", "is_release", "is_backup", "description"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6206,6 +6269,13 @@ func (ec *executionContext) unmarshalInputUpdateRepoInput(ctx context.Context, o
 				return it, err
 			}
 			it.URL = data
+		case "installation_id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("installation_id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InstallationID = data
 		case "platform":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("platform"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -6682,6 +6752,11 @@ func (ec *executionContext) _Repo(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "user_id":
 			out.Values[i] = ec._Repo_user_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "installation_id":
+			out.Values[i] = ec._Repo_installation_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
