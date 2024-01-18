@@ -21,6 +21,10 @@ func (r *repoHandlers) CreateRepoHandler(ctx context.Context, input model.Create
 	if userFromContext.UserID != userIdUUID {
 		return nil, errors.New("unauthorized")
 	}
+	installationId, err := uuid.Parse(input.InstallationID)
+	if err != nil {
+		return nil, err
+	}
 	repoId := uuid.New()
 	visibility := input.Visibility.String()
 	description := &sql.NullString{
@@ -32,9 +36,10 @@ func (r *repoHandlers) CreateRepoHandler(ctx context.Context, input model.Create
 		description.Valid = true
 	}
 	repo, err := r.dbQueries.CreateRepository(ctx, database.CreateRepositoryParams{
-		RepoID: repoId,
-		UserID: userIdUUID,
-		Name:   input.Name,
+		RepoID:         repoId,
+		UserID:         userIdUUID,
+		InstallationID: installationId,
+		Name:           input.Name,
 		Url: sql.NullString{
 			String: input.URL,
 			Valid:  true,
@@ -101,6 +106,14 @@ func (r *repoHandlers) UpdateRepoHandler(ctx context.Context, repoId string, inp
 			String: *input.Description,
 			Valid:  true,
 		}
+	}
+
+	if input.InstallationID != nil {
+		installationId, err := uuid.Parse(*input.InstallationID)
+		if err != nil {
+			return nil, err
+		}
+		repo.InstallationID = installationId
 	}
 
 	if input.IsRelease != nil {
