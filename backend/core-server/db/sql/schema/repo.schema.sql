@@ -1,5 +1,6 @@
 CREATE TABLE Repository (
     repo_id UUID PRIMARY KEY,
+    installation_id UUID NOT NULL,
     user_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     url VARCHAR(255),
@@ -7,6 +8,7 @@ CREATE TABLE Repository (
     visibility VARCHAR(255) NOT NULL DEFAULT 'PUBLIC',
     is_release BOOLEAN NOT NULL DEFAULT FALSE,
     is_backup BOOLEAN NOT NULL DEFAULT FALSE,
+    is_app BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

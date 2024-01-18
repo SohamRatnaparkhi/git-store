@@ -14,14 +14,15 @@ type AuthResponse struct {
 }
 
 type CreateRepoInput struct {
-	UserID      string     `json:"user_id"`
-	Name        string     `json:"name"`
-	URL         string     `json:"url"`
-	Platform    string     `json:"platform"`
-	Visibility  Visibility `json:"visibility"`
-	IsRelease   bool       `json:"is_release"`
-	IsBackup    bool       `json:"is_backup"`
-	Description *string    `json:"description,omitempty"`
+	UserID         string     `json:"user_id"`
+	Name           string     `json:"name"`
+	URL            string     `json:"url"`
+	InstallationID string     `json:"installation_id"`
+	Platform       string     `json:"platform"`
+	Visibility     Visibility `json:"visibility"`
+	IsRelease      bool       `json:"is_release"`
+	IsBackup       bool       `json:"is_backup"`
+	Description    *string    `json:"description,omitempty"`
 }
 
 type LoginUserInput struct {
@@ -58,17 +59,18 @@ type RegisterUserOAuthInput struct {
 }
 
 type Repo struct {
-	RepoID      string     `json:"repo_id"`
-	UserID      string     `json:"user_id"`
-	Name        string     `json:"name"`
-	URL         string     `json:"url"`
-	Platform    string     `json:"platform"`
-	Visibility  Visibility `json:"visibility"`
-	IsRelease   bool       `json:"is_release"`
-	IsBackup    bool       `json:"is_backup"`
-	Description *string    `json:"description,omitempty"`
-	CreatedAt   *string    `json:"created_at,omitempty"`
-	UpdatedAt   *string    `json:"updated_at,omitempty"`
+	RepoID         string     `json:"repo_id"`
+	UserID         string     `json:"user_id"`
+	InstallationID string     `json:"installation_id"`
+	Name           string     `json:"name"`
+	URL            string     `json:"url"`
+	Platform       string     `json:"platform"`
+	Visibility     Visibility `json:"visibility"`
+	IsRelease      bool       `json:"is_release"`
+	IsBackup       bool       `json:"is_backup"`
+	Description    *string    `json:"description,omitempty"`
+	CreatedAt      *string    `json:"created_at,omitempty"`
+	UpdatedAt      *string    `json:"updated_at,omitempty"`
 }
 
 type RepoFilterInput struct {
@@ -106,13 +108,14 @@ type Todo struct {
 }
 
 type UpdateRepoInput struct {
-	Name        *string     `json:"name,omitempty"`
-	URL         *string     `json:"url,omitempty"`
-	Platform    *string     `json:"platform,omitempty"`
-	Visibility  *Visibility `json:"visibility,omitempty"`
-	IsRelease   *bool       `json:"is_release,omitempty"`
-	IsBackup    *bool       `json:"is_backup,omitempty"`
-	Description *string     `json:"description,omitempty"`
+	Name           *string     `json:"name,omitempty"`
+	URL            *string     `json:"url,omitempty"`
+	InstallationID *string     `json:"installation_id,omitempty"`
+	Platform       *string     `json:"platform,omitempty"`
+	Visibility     *Visibility `json:"visibility,omitempty"`
+	IsRelease      *bool       `json:"is_release,omitempty"`
+	IsBackup       *bool       `json:"is_backup,omitempty"`
+	Description    *string     `json:"description,omitempty"`
 }
 
 type UpdateUserInput struct {
