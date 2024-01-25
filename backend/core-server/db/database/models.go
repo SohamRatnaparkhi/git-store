@@ -32,6 +32,19 @@ type Comment struct {
 	UpdatedAt time.Time
 }
 
+type Discount struct {
+	ID            int32
+	ProductID     uuid.NullUUID
+	Name          string
+	Description   string
+	DiscountCode  string
+	DiscountValue int32
+	StartDate     time.Time
+	EndDate       time.Time
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+}
+
 type Like struct {
 	LikeID    uuid.UUID
 	ProductID uuid.UUID
@@ -91,6 +104,23 @@ type Repository struct {
 	Description    sql.NullString
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+}
+
+type Score struct {
+	ScoreID   uuid.UUID
+	ProductID uuid.UUID
+	UserID    uuid.UUID
+	Score     int32
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type Tag struct {
+	TagID     uuid.UUID
+	ProductID uuid.UUID
+	Tag       string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 type User struct {
